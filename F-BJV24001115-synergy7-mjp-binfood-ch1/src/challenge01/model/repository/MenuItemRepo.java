@@ -21,6 +21,10 @@ public class MenuItemRepo {
 		menuItems = new LinkedHashSet<MenuItem>();
 	}
 
+	public int size() {
+		return menuItems.size();
+	}
+
 	public LinkedHashSet<MenuItem> getMenuItems() {
 		return menuItems;
 	}
