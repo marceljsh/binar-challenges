@@ -23,30 +23,42 @@ public class App {
     private static final int CONFIRM_AND_PAY = 99;
 
     private final MenuItemService menuItemService;
+    private final  Scanner scanner;
 
     public App() {
         menuItemService = new MenuItemService();
+        scanner = new Scanner(System.in);
     }
 
     public void run() {
         seed();
 
-        Map<MenuItem, Integer> orders = new HashMap<>();
-
-        try (Scanner scanner = new Scanner(System.in)) {
+        boolean newSession;
+        do {
+            Map<MenuItem, Integer> orders = new HashMap<>();
             int choice;
+
             do {
                 mainMenu();
-                choice = getUserChoice(scanner);
+                choice = getUserChoice();
 
                 if (choice == CONFIRM_AND_PAY) {
-                    confirmOrder(orders);
-                    choice = handleConfirmation(orders, scanner);
-                } else if (isValidMenuItemChoice(choice)) {
-                    handleMenuItemChoice(orders, scanner, choice);
-                }
+                    if (orders.isEmpty()) {
+                        System.out.println("=".repeat(24));
+                        System.out.println("Minimal 1 jumlah");
+                        System.out.println("pesanan");
+                        System.out.println("=".repeat(24));
+                        continue;
+                    }
+                        confirmOrder(orders);
+                        choice = handleConfirmation(orders);
+                    } else if (isValidMenuItemChoice(choice)) {
+                        handleMenuItemChoice(orders, scanner, choice);
+                    }
             } while (choice != EXIT);
-        }
+
+            newSession = askForNewSession();
+        } while (newSession);
     }
 
     private void seed() {
@@ -57,7 +69,20 @@ public class App {
         menuItemService.addMenuItem("Es Jeruk", 5000);
     }
 
-    public void confirmOrder(Map<MenuItem, Integer> orders) {
+    private boolean askForNewSession() {
+        System.out.println("=".repeat(24));
+        System.out.println("Mohon masukkan input");
+        System.out.println("pilihan anda");
+        System.out.println("=".repeat(24));
+        System.out.println("(Y) untuk lanjut");
+        System.out.println("(n) untuk keluar\n");
+
+        System.out.print("=> ");
+        String choice = scanner.nextLine();
+        return choice.equalsIgnoreCase("y");
+    }
+
+    private void confirmOrder(Map<MenuItem, Integer> orders) {
         System.out.println("=".repeat(26));
         System.out.println("Konfirmasi & Pembayaran");
         System.out.println("=".repeat(26) + "\n");
@@ -69,9 +94,16 @@ public class App {
         System.out.println("0. Keluar aplikasi\n");
     }
     
-    private int getUserChoice(Scanner scanner) {
+    private int getUserChoice() {
         System.out.print("=> ");
-        return scanner.nextInt();
+        while (!scanner.hasNextInt()) {
+            // Consume the invalid input
+            scanner.next();
+            System.out.print("=> ");
+        }
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        return choice;
     }
 
     private boolean isValidMenuItemChoice(int choice) {
@@ -86,8 +118,8 @@ public class App {
         }
     }
 
-    private int handleConfirmation(Map<MenuItem, Integer> orders, Scanner scanner) {
-        int action = getUserChoice(scanner);
+    private int handleConfirmation(Map<MenuItem, Integer> orders) {
+        int action = getUserChoice();
         if (action == 1) {
             generateReceipt(orders);
             return EXIT;
@@ -102,7 +134,14 @@ public class App {
         System.out.printf("%-15s | %s\n", menuItem.getName(), Styler.currency(menuItem.getPrice()));
         System.out.println("(Enter 0 to return)\n");
         System.out.print("qty => ");
-        return scanner.nextInt();
+
+        while (!scanner.hasNextInt()) {
+            scanner.next(); // Consume the invalid input
+            System.out.print("qty => ");
+        }
+        int quantity = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character left by nextInt()
+        return quantity;
     }
 
     private void mainMenu() {
