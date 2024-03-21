@@ -1,0 +1,15 @@
+.idea/
+.vscode/
+*.iml
+
+out/
+build/
+bin/
+
+.DS_Store
+Thumbs.db
+
+.sonarlint/
+
+receipt/
+

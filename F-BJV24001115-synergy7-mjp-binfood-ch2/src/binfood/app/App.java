@@ -12,13 +12,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+import java.util.logging.Logger;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class App {
 
+    private static final Logger logger = Logger.getLogger(App.class.getName());
     private static final int EXIT = 0;
     private static final int CONFIRM_AND_PAY = 99;
 
@@ -44,10 +44,9 @@ public class App {
 
                 if (choice == CONFIRM_AND_PAY) {
                     if (orders.isEmpty()) {
-                        System.out.println("=".repeat(24));
-                        System.out.println("Minimal 1 jumlah");
-                        System.out.println("pesanan");
-                        System.out.println("=".repeat(24));
+                        String bar = "=".repeat(24);
+                        String message = String.format("%snMinimal 1 jumlah pesanan%n%s%n", bar, bar);
+                        logger.info(message);
                         continue;
                     }
                         confirmOrder(orders);
@@ -70,36 +69,37 @@ public class App {
     }
 
     private boolean askForNewSession() {
-        System.out.println("=".repeat(24));
-        System.out.println("Mohon masukkan input");
-        System.out.println("pilihan anda");
-        System.out.println("=".repeat(24));
-        System.out.println("(Y) untuk lanjut");
-        System.out.println("(n) untuk keluar\n");
+        Arrays.asList(
+                "=".repeat(24) + "\n",
+                "Mohon masukkan input\n",
+                "pilihan anda\n",
+                "=".repeat(24) + "\n", "(Y) untuk lanjut\n",
+                "(n) untuk keluar\n\n",
+                "=> "
+        ).forEach(logger::info);
 
-        System.out.print("=> ");
         String choice = scanner.nextLine();
         return choice.equalsIgnoreCase("y");
     }
 
     private void confirmOrder(Map<MenuItem, Integer> orders) {
-        System.out.println("=".repeat(26));
-        System.out.println("Konfirmasi & Pembayaran");
-        System.out.println("=".repeat(26) + "\n");
-
-        System.out.println(invoice(orders));
-
-        System.out.println("\n1. Konfirmasi dan Bayar");
-        System.out.println("2. Kembali ke menu utama");
-        System.out.println("0. Keluar aplikasi\n");
+        Arrays.asList(
+                "=".repeat(26) + "\n",
+                "Konfirmasi & Pembayaran\n",
+                "=".repeat(26) + "\n\n",
+                invoice(orders),
+                "\n1. Konfirmasi dan Bayar",
+                "2. Kembali ke menu utama",
+                "0. Keluar aplikasi\n"
+        ).forEach(logger::info);
     }
     
     private int getUserChoice() {
-        System.out.print("=> ");
+        logger.info("=> ");
         while (!scanner.hasNextInt()) {
-            // Consume the invalid input
+            // to consume the invalid input
             scanner.next();
-            System.out.print("=> ");
+            logger.info("=> ");
         }
         int choice = scanner.nextInt();
         scanner.nextLine();
@@ -128,42 +128,51 @@ public class App {
     }
 
     private int getQuantityFromUser(Scanner scanner, MenuItem menuItem) {
-        System.out.println("=".repeat(26));
-        System.out.println("How many would you like to order?");
-        System.out.println("=".repeat(26));
-        System.out.printf("%-15s | %s\n", menuItem.getName(), Styler.currency(menuItem.getPrice()));
-        System.out.println("(Enter 0 to return)\n");
-        System.out.print("qty => ");
+        Arrays.asList(
+                "=".repeat(26) + "\n",
+                "How many would you like to order?\n",
+                "=".repeat(26) + "\n",
+                String.format("%-15s | %s\n", menuItem.getName(),
+                        Styler.currency(menuItem.getPrice())),
+                "(Enter 0 to return)\n\n",
+                "qty => "
+        ).forEach(logger::info);
 
         while (!scanner.hasNextInt()) {
-            scanner.next(); // Consume the invalid input
-            System.out.print("qty => ");
+            // to consume the invalid input
+            scanner.next();
+            logger.info("qty => ");
         }
         int quantity = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character left by nextInt()
+
+        // to consume the newline character left by nextInt()
+        scanner.nextLine();
         return quantity;
     }
 
     private void mainMenu() {
-        System.out.println("=".repeat(26));
-        System.out.println("Selamat datang di Binarfud");
-        System.out.println("=".repeat(26) + "\n");
-        System.out.println("Silahkan pilih makanan :");
+        for (String s : Arrays.asList("=".repeat(26) + "\n",
+                "Selamat datang di Binarfud\n",
+                "=".repeat(26) + "\n\n",
+                "Silahkan pilih makanan :\n")) {
+            logger.info(s);
+        }
 
         int i = 1;
         for (MenuItem menuItem: menuItemService.getAll()) {
-            System.out.printf("%d. %-15s | %s\n",
-                    i, menuItem.getName(), Styler.currency(menuItem.getPrice()));
+            logger.info(String.format("%d. %-15s | %s\n",
+                    i, menuItem.getName(), Styler.currency(menuItem.getPrice())));
             i++;
         }
 
-        System.out.println("99. Pesan dan Bayar");
-        System.out.println("0. Keluar aplikasi");
+        logger.info("99. Pesan dan Bayar\n");
+        logger.info("0. Keluar aplikasi\n");
     }
 
     private String invoice(Map<MenuItem, Integer> orders) {
         StringBuilder invoiceContent = new StringBuilder();
-        int total=0, bill=0;
+        int total = 0;
+        int bill = 0;
 
         for (MenuItem menuItem: orders.keySet()) {
             int quantity = orders.get(menuItem);
@@ -185,7 +194,7 @@ public class App {
         return invoiceContent.toString();
     }
 
-    public void generateReceipt(Map<MenuItem, Integer> orders) {
+    private void generateReceipt(Map<MenuItem, Integer> orders) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
         String fileName = String.format("receipt_%s.txt", LocalDateTime.now().format(formatter));
         Path dir = Paths.get("./receipt");
@@ -202,7 +211,7 @@ public class App {
             }
 
         } catch (IOException e) {
-            System.err.printf("Error writing to %s: %s%n", fileName, e.getMessage());
+            logger.severe(String.format("Error writing to %s: %s%n", fileName, e.getMessage()));
         }
     }
 
