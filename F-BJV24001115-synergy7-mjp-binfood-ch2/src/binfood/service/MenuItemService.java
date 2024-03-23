@@ -5,7 +5,7 @@ import binfood.model.repository.MenuItemRepo;
 
 public class MenuItemService {
 
-    private MenuItemRepo menuItemRepo;
+    private final MenuItemRepo menuItemRepo;
 
     public MenuItemService() {
         menuItemRepo = new MenuItemRepo();

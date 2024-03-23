@@ -6,9 +6,9 @@ import java.util.*;
 
 public class MenuItemRepo {
 
-    private static long nextId = 1L;
+    private long nextId = 1L;
 
-    private static MenuItem NULL_MENU_ITEM = new MenuItem(0L, "", 0);
+    private static final MenuItem NULL_MENU_ITEM = new MenuItem(0L, "", 0);
 
     private final Map<Long, MenuItem> menuItems;
 
@@ -43,27 +43,7 @@ public class MenuItemRepo {
         return NULL_MENU_ITEM;
     }
     
-    public void update(MenuItem menuItem) {
-        menuItems.put(menuItem.getId(), menuItem);
-    }
-    
-    public void clear() {
-        menuItems.clear();
-    }
-    
     public int size() {
         return menuItems.size();
-    }
-    
-    public boolean contains(MenuItem menuItem) {
-        return menuItems.containsValue(menuItem);
-    }
-    
-    public boolean contains(Long id) {
-        return menuItems.containsKey(id);
-    }
-    
-    public boolean isEmpty() {
-        return menuItems.isEmpty();
     }
 }
