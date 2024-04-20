@@ -49,22 +49,22 @@ public class InMemoryOrderRepository implements OrderRepository {
   @Override
   public List<Order> findAllCompleted() {
     return orders.values().stream()
-      .filter(Order::isCompleted)
-      .toList();
+        .filter(Order::isCompleted)
+        .toList();
   }
 
   @Override
   public List<Order> findAllUncompleted() {
     return orders.values().stream()
-      .filter(order -> !order.isCompleted())
-      .toList();
+        .filter(order -> !order.isCompleted())
+        .toList();
   }
 
   @Override
   public List<Order> findAllByUserId(UUID userId) {
     return orders.values().stream()
-      .filter(order -> order.getCustomer().getId().equals(userId))
-      .toList();
+        .filter(order -> order.getCustomer().getId().equals(userId))
+        .toList();
   }
 
   @Override

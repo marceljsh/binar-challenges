@@ -9,11 +9,18 @@ import java.util.UUID;
 public interface MerchantRepository {
 
   boolean save(Merchant merchant);
+
   Optional<Merchant> findById(UUID id);
+
   List<Merchant> findAll();
+
   List<Merchant> findByName(String name);
+
   List<Merchant> findByLocation(String location);
+
   void deleteById(UUID id);
+
   void deleteAll();
+
   int size();
 }

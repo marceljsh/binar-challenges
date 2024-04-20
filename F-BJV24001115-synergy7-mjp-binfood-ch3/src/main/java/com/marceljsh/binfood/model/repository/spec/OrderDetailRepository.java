@@ -11,10 +11,16 @@ import java.util.UUID;
 public interface OrderDetailRepository {
 
   boolean save(Order order, Product product, int quantity);
+
   List<OrderDetail> findAll();
+
   Optional<OrderDetail> findById(UUID id);
+
   List<OrderDetail> findByOrderId(UUID orderId);
+
   boolean existById(UUID id);
+
   int size();
+
   void clear();
 }

@@ -18,10 +18,10 @@ class UserServiceTest {
   @Test
   void saveSuccess() {
     CreateUserRequest request = CreateUserRequest.builder()
-      .name("Kendrick Lamar")
-      .email("kdot@tde.com")
-      .password("itsjustbigme")
-      .build();
+        .name("Kendrick Lamar")
+        .email("kdot@tde.com")
+        .password("itsjustbigme")
+        .build();
 
     boolean ok = userService.save(request);
 
@@ -31,10 +31,10 @@ class UserServiceTest {
   @Test
   void saveFailedEmptyName() {
     CreateUserRequest request = CreateUserRequest.builder()
-      .name("")
-      .email("kdot@tde.com")
-      .password("itsjustbigme")
-      .build();
+        .name("")
+        .email("kdot@tde.com")
+        .password("itsjustbigme")
+        .build();
 
     boolean ok = userService.save(request);
 
@@ -44,10 +44,10 @@ class UserServiceTest {
   @Test
   void saveFailedEmptyEmail() {
     CreateUserRequest request = CreateUserRequest.builder()
-      .name("Kendrick Lamar")
-      .email("")
-      .password("itsjustbigme")
-      .build();
+        .name("Kendrick Lamar")
+        .email("")
+        .password("itsjustbigme")
+        .build();
 
     boolean ok = userService.save(request);
 
@@ -57,10 +57,10 @@ class UserServiceTest {
   @Test
   void saveFailedEmptyPassword() {
     CreateUserRequest request = CreateUserRequest.builder()
-      .name("Kendrick Lamar")
-      .email("kdot@tde.com")
-      .password("")
-      .build();
+        .name("Kendrick Lamar")
+        .email("kdot@tde.com")
+        .password("")
+        .build();
 
     boolean ok = userService.save(request);
 
@@ -70,10 +70,10 @@ class UserServiceTest {
   @Test
   void saveFailedInvalidEmail() {
     CreateUserRequest request = CreateUserRequest.builder()
-      .name("Kendrick Lamar")
-      .email("kdottdecom")
-      .password("itsjustbigme")
-      .build();
+        .name("Kendrick Lamar")
+        .email("kdottdecom")
+        .password("itsjustbigme")
+        .build();
 
     boolean ok = userService.save(request);
 
@@ -83,16 +83,16 @@ class UserServiceTest {
   @Test
   void clear() {
     userService.save(CreateUserRequest.builder()
-      .name("John Doe")
-      .email("johndoe@npc.com")
-      .password("secret")
-      .build());
+        .name("John Doe")
+        .email("johndoe@npc.com")
+        .password("secret")
+        .build());
 
     userService.save(CreateUserRequest.builder()
-      .name("Jane Doe")
-      .email("janedoe@npc.com")
-      .password("secret")
-      .build());
+        .name("Jane Doe")
+        .email("janedoe@npc.com")
+        .password("secret")
+        .build());
 
     assertEquals(2, userService.size());
 
@@ -104,10 +104,10 @@ class UserServiceTest {
   @Test
   void deleteByIdSuccess() {
     userService.save(CreateUserRequest.builder()
-      .name("Kendrick Lamar")
-      .email("kdot@tde.com")
-      .password("itsjustbigme")
-      .build());
+        .name("Kendrick Lamar")
+        .email("kdot@tde.com")
+        .password("itsjustbigme")
+        .build());
 
     assertEquals(1, userService.size());
 
@@ -121,10 +121,10 @@ class UserServiceTest {
   @Test
   void deleteByIdNotFound() {
     userService.save(CreateUserRequest.builder()
-      .name("Kendrick Lamar")
-      .email("kdot@tde.com")
-      .password("itsjustbigme")
-      .build());
+        .name("Kendrick Lamar")
+        .email("kdot@tde.com")
+        .password("itsjustbigme")
+        .build());
 
     assertEquals(1, userService.size());
 
@@ -138,10 +138,10 @@ class UserServiceTest {
   @Test
   void findAllPopulated() {
     userService.save(CreateUserRequest.builder()
-      .name("Kendrick Lamar")
-      .email("kdot@tde.com")
-      .password("itsjustbigme")
-      .build());
+        .name("Kendrick Lamar")
+        .email("kdot@tde.com")
+        .password("itsjustbigme")
+        .build());
 
     assertEquals(1, userService.size());
   }
@@ -154,10 +154,10 @@ class UserServiceTest {
   @Test
   void findByIdSuccess() {
     userService.save(CreateUserRequest.builder()
-      .name("Kendrick Lamar")
-      .email("kdot@tde.com")
-      .password("itsjustbigme")
-      .build());
+        .name("Kendrick Lamar")
+        .email("kdot@tde.com")
+        .password("itsjustbigme")
+        .build());
 
     String id = userService.findAll().get(0).getId().toString();
 
@@ -172,10 +172,10 @@ class UserServiceTest {
   @Test
   void findFirstByEmailSuccess() {
     userService.save(CreateUserRequest.builder()
-      .name("Kendrick Lamar")
-      .email("kdot@tde.com")
-      .password("itsjustbigme")
-      .build());
+        .name("Kendrick Lamar")
+        .email("kdot@tde.com")
+        .password("itsjustbigme")
+        .build());
 
     assertTrue(userService.findFirstByEmail("kdot@tde.com").isPresent());
   }
@@ -188,16 +188,16 @@ class UserServiceTest {
   @Test
   void findByNameFound() {
     userService.save(CreateUserRequest.builder()
-      .name("John Doe")
-      .email("johndoe@npc.com")
-      .password("secret")
-      .build());
+        .name("John Doe")
+        .email("johndoe@npc.com")
+        .password("secret")
+        .build());
 
     userService.save(CreateUserRequest.builder()
-      .name("Jane Doe")
-      .email("janedoe@npc.com")
-      .password("secret")
-      .build());
+        .name("Jane Doe")
+        .email("janedoe@npc.com")
+        .password("secret")
+        .build());
 
     assertEquals(2, userService.findByName("Doe").size());
   }

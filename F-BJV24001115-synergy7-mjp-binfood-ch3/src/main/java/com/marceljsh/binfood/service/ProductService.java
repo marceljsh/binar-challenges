@@ -56,11 +56,10 @@ public class ProductService {
     }
 
     return productRepository.save(new Product(
-      null,
-      request.getName(),
-      request.getPrice(),
-      merchant
-    ));
+        null,
+        request.getName(),
+        request.getPrice(),
+        merchant));
   }
 
   public Optional<Product> findById(String id) {
@@ -81,6 +80,7 @@ public class ProductService {
   }
 
   // TODO: update entity
+  // TODO: get by open merchant
 
   public void deleteById(String id) {
     if (verifier.isValidUUID(id)) {

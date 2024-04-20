@@ -39,11 +39,10 @@ public class UserService {
     }
 
     return userRepository.save(new User(
-      null,
-      request.getName(),
-      request.getEmail(),
-      request.getPassword()
-    ));
+        null,
+        request.getName(),
+        request.getEmail(),
+        request.getPassword()));
   }
 
   public Optional<User> findById(String id) {

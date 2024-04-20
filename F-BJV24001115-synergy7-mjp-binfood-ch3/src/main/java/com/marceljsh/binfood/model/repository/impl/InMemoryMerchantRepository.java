@@ -47,15 +47,15 @@ public class InMemoryMerchantRepository implements MerchantRepository {
   @Override
   public List<Merchant> findByName(String name) {
     return merchants.values().stream()
-      .filter(merchant -> merchant.getName().contains(name))
-      .toList();
+        .filter(merchant -> merchant.getName().contains(name))
+        .toList();
   }
 
   @Override
   public List<Merchant> findByLocation(String location) {
     return merchants.values().stream()
-      .filter(merchant -> merchant.getLocation().contains(location))
-      .toList();
+        .filter(merchant -> merchant.getLocation().contains(location))
+        .toList();
   }
 
   @Override

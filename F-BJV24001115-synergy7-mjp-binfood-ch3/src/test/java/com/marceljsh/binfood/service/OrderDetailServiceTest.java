@@ -34,10 +34,10 @@ class OrderDetailServiceTest {
 
   UUID seedAndGetIdOfCustomer() {
     CreateUserRequest userRequest = CreateUserRequest.builder()
-      .name("Kendrick Lamar")
-      .email("kdot@tde.com")
-      .password("itsjustbigme")
-      .build();
+        .name("Kendrick Lamar")
+        .email("kdot@tde.com")
+        .password("itsjustbigme")
+        .build();
     userService.save(userRequest);
 
     return userService.findAll().get(0).getId();
@@ -45,9 +45,9 @@ class OrderDetailServiceTest {
 
   UUID seedAndGetIdOfMerchant() {
     CreateMerchantRequest userRequest = CreateMerchantRequest.builder()
-      .name("B-Dup da KrackDealah")
-      .location("Idlewood")
-      .build();
+        .name("B-Dup da KrackDealah")
+        .location("Idlewood")
+        .build();
     merchantService.save(userRequest);
 
     return merchantService.findAll().get(0).getId();

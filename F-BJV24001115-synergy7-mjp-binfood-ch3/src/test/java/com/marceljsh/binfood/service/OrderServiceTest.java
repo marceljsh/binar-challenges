@@ -17,10 +17,10 @@ class OrderServiceTest {
 
   UUID seedAndGetIdOfCustomer() {
     CreateUserRequest userRequest = CreateUserRequest.builder()
-      .name("Kendrick Lamar")
-      .email("kdot@tde.com")
-      .password("itsjustbigme")
-      .build();
+        .name("Kendrick Lamar")
+        .email("kdot@tde.com")
+        .password("itsjustbigme")
+        .build();
     userService.save(userRequest);
 
     return userService.findAll().get(0).getId();
@@ -35,9 +35,9 @@ class OrderServiceTest {
   void saveSuccess() {
     UUID customerId = seedAndGetIdOfCustomer();
     CreateOrderRequest request = CreateOrderRequest.builder()
-      .destination("Egghead")
-      .customerId(customerId.toString())
-      .build();
+        .destination("Egghead")
+        .customerId(customerId.toString())
+        .build();
 
     boolean result = orderService.save(request);
     assertTrue(result);
@@ -50,9 +50,9 @@ class OrderServiceTest {
   void saveFailedEmptyDestination() {
     UUID customerId = seedAndGetIdOfCustomer();
     CreateOrderRequest request = CreateOrderRequest.builder()
-      .destination("")
-      .customerId(customerId.toString())
-      .build();
+        .destination("")
+        .customerId(customerId.toString())
+        .build();
 
     boolean result = orderService.save(request);
     assertFalse(result);
@@ -61,9 +61,9 @@ class OrderServiceTest {
   @Test
   void saveFailedInvalidCustomerId() {
     CreateOrderRequest request = CreateOrderRequest.builder()
-      .destination("Egghead")
-      .customerId("invalid-uuid")
-      .build();
+        .destination("Egghead")
+        .customerId("invalid-uuid")
+        .build();
 
     boolean result = orderService.save(request);
     assertFalse(result);
@@ -73,9 +73,9 @@ class OrderServiceTest {
   void saveFailedNonexistentCustomer() {
     UUID customerId = UUID.randomUUID();
     CreateOrderRequest request = CreateOrderRequest.builder()
-      .destination("Egghead")
-      .customerId(customerId.toString())
-      .build();
+        .destination("Egghead")
+        .customerId(customerId.toString())
+        .build();
 
     boolean result = orderService.save(request);
     assertFalse(result);
@@ -85,9 +85,9 @@ class OrderServiceTest {
   void completeSuccess() {
     UUID customerId = seedAndGetIdOfCustomer();
     CreateOrderRequest request = CreateOrderRequest.builder()
-      .destination("Egghead")
-      .customerId(customerId.toString())
-      .build();
+        .destination("Egghead")
+        .customerId(customerId.toString())
+        .build();
     orderService.save(request);
 
     UUID orderId = orderService.findAll().get(0).getId();
@@ -106,9 +106,9 @@ class OrderServiceTest {
   void findByIdSuccess() {
     UUID customerId = seedAndGetIdOfCustomer();
     CreateOrderRequest request = CreateOrderRequest.builder()
-      .destination("Egghead")
-      .customerId(customerId.toString())
-      .build();
+        .destination("Egghead")
+        .customerId(customerId.toString())
+        .build();
     boolean result = orderService.save(request);
 
     assertTrue(result);
@@ -126,9 +126,9 @@ class OrderServiceTest {
   void findAll() {
     UUID customerId = seedAndGetIdOfCustomer();
     CreateOrderRequest request = CreateOrderRequest.builder()
-      .destination("Egghead")
-      .customerId(customerId.toString())
-      .build();
+        .destination("Egghead")
+        .customerId(customerId.toString())
+        .build();
     orderService.save(request);
 
     assertEquals(1, orderService.findAll().size());
@@ -138,9 +138,9 @@ class OrderServiceTest {
   void findAllCompleted() {
     UUID customerId = seedAndGetIdOfCustomer();
     CreateOrderRequest request = CreateOrderRequest.builder()
-      .destination("Egghead")
-      .customerId(customerId.toString())
-      .build();
+        .destination("Egghead")
+        .customerId(customerId.toString())
+        .build();
     orderService.save(request);
 
     UUID orderId = orderService.findAll().get(0).getId();
@@ -153,9 +153,9 @@ class OrderServiceTest {
   void findAllUncompleted() {
     UUID customerId = seedAndGetIdOfCustomer();
     CreateOrderRequest request = CreateOrderRequest.builder()
-      .destination("Egghead")
-      .customerId(customerId.toString())
-      .build();
+        .destination("Egghead")
+        .customerId(customerId.toString())
+        .build();
     orderService.save(request);
 
     assertEquals(1, orderService.findAllUncompleted().size());
@@ -165,9 +165,9 @@ class OrderServiceTest {
   void findAllByUserIdSuccess() {
     UUID customerId = seedAndGetIdOfCustomer();
     CreateOrderRequest request = CreateOrderRequest.builder()
-      .destination("Egghead")
-      .customerId(customerId.toString())
-      .build();
+        .destination("Egghead")
+        .customerId(customerId.toString())
+        .build();
     orderService.save(request);
 
     assertEquals(1, orderService.findAllByUserId(customerId.toString()).size());
@@ -182,9 +182,9 @@ class OrderServiceTest {
   void deleteByIdSuccess() {
     UUID customerId = seedAndGetIdOfCustomer();
     CreateOrderRequest request = CreateOrderRequest.builder()
-      .destination("Egghead")
-      .customerId(customerId.toString())
-      .build();
+        .destination("Egghead")
+        .customerId(customerId.toString())
+        .build();
     orderService.save(request);
 
     UUID orderId = orderService.findAll().get(0).getId();
@@ -210,9 +210,9 @@ class OrderServiceTest {
   void existByIdSuccess() {
     UUID customerId = seedAndGetIdOfCustomer();
     CreateOrderRequest request = CreateOrderRequest.builder()
-      .destination("Egghead")
-      .customerId(customerId.toString())
-      .build();
+        .destination("Egghead")
+        .customerId(customerId.toString())
+        .build();
     orderService.save(request);
 
     UUID orderId = orderService.findAll().get(0).getId();

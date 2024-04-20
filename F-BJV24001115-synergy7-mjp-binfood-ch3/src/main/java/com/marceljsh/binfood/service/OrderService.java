@@ -55,12 +55,11 @@ public class OrderService {
     }
 
     return orderRepository.save(new Order(
-      null,
-      null,
-      request.getDestination(),
-      customer,
-      false
-    ));
+        null,
+        null,
+        request.getDestination(),
+        customer,
+        false));
   }
 
   public boolean completeOrder(UUID id) {

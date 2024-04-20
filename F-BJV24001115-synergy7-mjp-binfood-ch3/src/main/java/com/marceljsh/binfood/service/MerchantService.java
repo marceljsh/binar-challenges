@@ -39,11 +39,10 @@ public class MerchantService {
     }
 
     return merchantRepository.save(new Merchant(
-      null,
-      request.getName(),
-      request.getLocation(),
-      true
-    ));
+        null,
+        request.getName(),
+        request.getLocation(),
+        true));
   }
 
   public Optional<Merchant> findById(String id) {

@@ -22,9 +22,9 @@ class ProductServiceTest {
 
   UUID seedAndGetIdOfMerchant() {
     CreateMerchantRequest merchantRequest = CreateMerchantRequest.builder()
-      .name("Warung Makan Sederhana")
-      .location("Jl. Raya Sederhana")
-      .build();
+        .name("Warung Makan Sederhana")
+        .location("Jl. Raya Sederhana")
+        .build();
     merchantService.save(merchantRequest);
 
     return merchantService.findAll().get(0).getId();
@@ -34,10 +34,10 @@ class ProductServiceTest {
   void saveSuccess() {
     UUID merchantId = seedAndGetIdOfMerchant();
     CreateProductRequest request = CreateProductRequest.builder()
-      .name("Nasi Goreng")
-      .price(15000L)
-      .merchantId(merchantId.toString())
-      .build();
+        .name("Nasi Goreng")
+        .price(15000L)
+        .merchantId(merchantId.toString())
+        .build();
 
     boolean result = productService.save(request);
 
@@ -48,10 +48,10 @@ class ProductServiceTest {
   void saveFailedEmptyName() {
     UUID merchantId = seedAndGetIdOfMerchant();
     CreateProductRequest request = CreateProductRequest.builder()
-      .name("")
-      .price(15000L)
-      .merchantId(merchantId.toString())
-      .build();
+        .name("")
+        .price(15000L)
+        .merchantId(merchantId.toString())
+        .build();
 
     boolean result = productService.save(request);
 
@@ -62,10 +62,10 @@ class ProductServiceTest {
   void saveFailedInvalidPrice() {
     UUID merchantId = seedAndGetIdOfMerchant();
     CreateProductRequest request = CreateProductRequest.builder()
-      .name("Nasi Goreng")
-      .price(0L)
-      .merchantId(merchantId.toString())
-      .build();
+        .name("Nasi Goreng")
+        .price(0L)
+        .merchantId(merchantId.toString())
+        .build();
 
     boolean result = productService.save(request);
 
@@ -75,10 +75,10 @@ class ProductServiceTest {
   @Test
   void saveFailedInvalidMerchantId() {
     CreateProductRequest request = CreateProductRequest.builder()
-      .name("Nasi Goreng")
-      .price(15000L)
-      .merchantId("123")
-      .build();
+        .name("Nasi Goreng")
+        .price(15000L)
+        .merchantId("123")
+        .build();
 
     boolean result = productService.save(request);
 
@@ -89,10 +89,10 @@ class ProductServiceTest {
   void saveFailedMerchantNotFound() {
     UUID merchantId = UUID.randomUUID();
     CreateProductRequest request = CreateProductRequest.builder()
-      .name("Nasi Goreng")
-      .price(15000L)
-      .merchantId(merchantId.toString())
-      .build();
+        .name("Nasi Goreng")
+        .price(15000L)
+        .merchantId(merchantId.toString())
+        .build();
 
     boolean result = productService.save(request);
 
@@ -103,15 +103,15 @@ class ProductServiceTest {
   void findAllPopulated() {
     UUID merchantId = seedAndGetIdOfMerchant();
     productService.save(CreateProductRequest.builder()
-      .name("Nasi Goreng")
-      .price(15000L)
-      .merchantId(merchantId.toString())
-      .build());
+        .name("Nasi Goreng")
+        .price(15000L)
+        .merchantId(merchantId.toString())
+        .build());
     productService.save(CreateProductRequest.builder()
-      .name("Mie Goreng")
-      .price(12000L)
-      .merchantId(merchantId.toString())
-      .build());
+        .name("Mie Goreng")
+        .price(12000L)
+        .merchantId(merchantId.toString())
+        .build());
 
     assertEquals(2, productService.size());
   }
@@ -125,10 +125,10 @@ class ProductServiceTest {
   void findByIdSuccess() {
     UUID merchantId = seedAndGetIdOfMerchant();
     CreateProductRequest productRequest = CreateProductRequest.builder()
-      .name("Nasi Goreng")
-      .price(15000L)
-      .merchantId(merchantId.toString())
-      .build();
+        .name("Nasi Goreng")
+        .price(15000L)
+        .merchantId(merchantId.toString())
+        .build();
     productService.save(productRequest);
 
     String id = productService.findAll().get(0).getId().toString();
@@ -140,10 +140,10 @@ class ProductServiceTest {
   void findByIdNotFound() {
     UUID merchantId = seedAndGetIdOfMerchant();
     CreateProductRequest request = CreateProductRequest.builder()
-      .name("Nasi Goreng")
-      .price(15000L)
-      .merchantId(merchantId.toString())
-      .build();
+        .name("Nasi Goreng")
+        .price(15000L)
+        .merchantId(merchantId.toString())
+        .build();
     productService.save(request);
 
     String id = UUID.randomUUID().toString();
@@ -160,10 +160,10 @@ class ProductServiceTest {
   void findFirstByNameSuccess() {
     UUID merchantId = seedAndGetIdOfMerchant();
     CreateProductRequest request = CreateProductRequest.builder()
-      .name("Nasi Goreng")
-      .price(15000L)
-      .merchantId(merchantId.toString())
-      .build();
+        .name("Nasi Goreng")
+        .price(15000L)
+        .merchantId(merchantId.toString())
+        .build();
     productService.save(request);
 
     assertTrue(productService.findFirstByName("Nasi Goreng").isPresent());
@@ -173,10 +173,10 @@ class ProductServiceTest {
   void findFirstByNameCaseInsensitive() {
     UUID merchantId = seedAndGetIdOfMerchant();
     CreateProductRequest request = CreateProductRequest.builder()
-      .name("Nasi Goreng")
-      .price(15000L)
-      .merchantId(merchantId.toString())
-      .build();
+        .name("Nasi Goreng")
+        .price(15000L)
+        .merchantId(merchantId.toString())
+        .build();
     productService.save(request);
 
     assertFalse(productService.findFirstByName("nasi goreng").isPresent());
@@ -191,10 +191,10 @@ class ProductServiceTest {
   void deleteByIdSuccess() {
     UUID merchantId = seedAndGetIdOfMerchant();
     CreateProductRequest request = CreateProductRequest.builder()
-      .name("Nasi Goreng")
-      .price(15000L)
-      .merchantId(merchantId.toString())
-      .build();
+        .name("Nasi Goreng")
+        .price(15000L)
+        .merchantId(merchantId.toString())
+        .build();
     boolean result = productService.save(request);
 
     assertTrue(result);

@@ -5,7 +5,11 @@ import com.marceljsh.binfood.model.entity.OrderDetail;
 import com.marceljsh.binfood.model.entity.Product;
 import com.marceljsh.binfood.model.repository.spec.OrderDetailRepository;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 public class InMemoryOrderDetailRepository implements OrderDetailRepository {
 
@@ -27,12 +31,11 @@ public class InMemoryOrderDetailRepository implements OrderDetailRepository {
   @Override
   public boolean save(Order order, Product product, int quantity) {
     OrderDetail orderDetail = new OrderDetail(
-      UUID.randomUUID(),
-      order,
-      product,
-      quantity,
-      product.getPrice() * quantity
-    );
+        UUID.randomUUID(),
+        order,
+        product,
+        quantity,
+        product.getPrice() * quantity);
 
     return orderDetails.put(orderDetail.getId(), orderDetail) == null;
   }
@@ -49,9 +52,9 @@ public class InMemoryOrderDetailRepository implements OrderDetailRepository {
 
   @Override
   public List<OrderDetail> findByOrderId(UUID orderId) {
-  return orderDetails.values().stream()
-      .filter(orderDetail -> orderDetail.getOrder().getId().equals(orderId))
-      .toList();
+    return orderDetails.values().stream()
+        .filter(orderDetail -> orderDetail.getOrder().getId().equals(orderId))
+        .toList();
   }
 
   @Override

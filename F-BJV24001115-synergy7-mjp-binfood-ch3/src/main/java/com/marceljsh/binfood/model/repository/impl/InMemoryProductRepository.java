@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-
 public class InMemoryProductRepository implements ProductRepository {
 
   private static InMemoryProductRepository instance;
@@ -48,8 +47,8 @@ public class InMemoryProductRepository implements ProductRepository {
   @Override
   public Optional<Product> findFirstByName(String name) {
     return products.values().stream()
-      .filter(item -> item.getName().equals(name))
-      .findFirst();
+        .filter(item -> item.getName().equals(name))
+        .findFirst();
   }
 
   @Override

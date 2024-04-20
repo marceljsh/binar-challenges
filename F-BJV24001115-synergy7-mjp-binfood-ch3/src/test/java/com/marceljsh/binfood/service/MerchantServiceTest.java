@@ -21,9 +21,9 @@ class MerchantServiceTest {
   @Test
   void saveSuccess() {
     CreateMerchantRequest request = CreateMerchantRequest.builder()
-      .name("Mak Robi")
-      .location("Jl. Layang No. 1")
-      .build();
+        .name("Mak Robi")
+        .location("Jl. Layang No. 1")
+        .build();
 
     boolean ok = merchantService.save(request);
 
@@ -33,9 +33,9 @@ class MerchantServiceTest {
   @Test
   void saveFailedEmptyName() {
     CreateMerchantRequest request = CreateMerchantRequest.builder()
-      .name("")
-      .location("Jl. Layang No. 1")
-      .build();
+        .name("")
+        .location("Jl. Layang No. 1")
+        .build();
 
     boolean ok = merchantService.save(request);
 
@@ -45,9 +45,9 @@ class MerchantServiceTest {
   @Test
   void saveFailedEmptyLocation() {
     CreateMerchantRequest request = CreateMerchantRequest.builder()
-      .name("Mak Robi")
-      .location("")
-      .build();
+        .name("Mak Robi")
+        .location("")
+        .build();
 
     boolean ok = merchantService.save(request);
 
@@ -57,14 +57,14 @@ class MerchantServiceTest {
   @Test
   void findAllPopulated() {
     merchantService.save(CreateMerchantRequest.builder()
-      .name("Mak Robi")
-      .location("Jl. Layang No. 1")
-      .build());
+        .name("Mak Robi")
+        .location("Jl. Layang No. 1")
+        .build());
 
     merchantService.save(CreateMerchantRequest.builder()
-      .name("Mak Itin")
-      .location("Jl. Jambu No. 14")
-      .build());
+        .name("Mak Itin")
+        .location("Jl. Jambu No. 14")
+        .build());
 
     assertEquals(2, merchantService.size());
   }
@@ -77,9 +77,9 @@ class MerchantServiceTest {
   @Test
   void findByIdSuccess() {
     CreateMerchantRequest request = CreateMerchantRequest.builder()
-      .name("Mak Robi")
-      .location("Jl. Layang No. 1")
-      .build();
+        .name("Mak Robi")
+        .location("Jl. Layang No. 1")
+        .build();
 
     merchantService.save(request);
 
@@ -96,14 +96,14 @@ class MerchantServiceTest {
   @Test
   void findByNamePopulated() {
     merchantService.save(CreateMerchantRequest.builder()
-      .name("Mak Robi")
-      .location("Jl. Layang No. 1")
-      .build());
+        .name("Mak Robi")
+        .location("Jl. Layang No. 1")
+        .build());
 
     merchantService.save(CreateMerchantRequest.builder()
-      .name("Mak Itin")
-      .location("Jl. Jambu No. 14")
-      .build());
+        .name("Mak Itin")
+        .location("Jl. Jambu No. 14")
+        .build());
 
     assertEquals(2, merchantService.findByName("Mak").size());
   }
@@ -116,14 +116,14 @@ class MerchantServiceTest {
   @Test
   void findByLocationPopulated() {
     merchantService.save(CreateMerchantRequest.builder()
-      .name("Mak Robi")
-      .location("Jl. Layang No. 1")
-      .build());
+        .name("Mak Robi")
+        .location("Jl. Layang No. 1")
+        .build());
 
     merchantService.save(CreateMerchantRequest.builder()
-      .name("Mak Itin")
-      .location("Jl. Jambu No. 14")
-      .build());
+        .name("Mak Itin")
+        .location("Jl. Jambu No. 14")
+        .build());
 
     assertEquals(2, merchantService.findByLocation("Jl").size());
   }
@@ -136,9 +136,9 @@ class MerchantServiceTest {
   @Test
   void deleteByIdFound() {
     CreateMerchantRequest request = CreateMerchantRequest.builder()
-      .name("Mak Robi")
-      .location("Jl. Layang No. 1")
-      .build();
+        .name("Mak Robi")
+        .location("Jl. Layang No. 1")
+        .build();
 
     merchantService.save(request);
 
