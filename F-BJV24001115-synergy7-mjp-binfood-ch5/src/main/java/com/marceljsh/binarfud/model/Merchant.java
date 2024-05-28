@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.util.Objects;
 
@@ -17,9 +16,30 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 @Entity
-@SQLRestriction("deleted_at IS NULL")
 @Table(name = "tbl_merchants")
+
+//@NamedNativeQuery(
+//  name = "Merchant.updateInfo",
+//  query = "SELECT * FROM update_merchant_info(:id, :name, :location)",
+//  resultSetMapping = "MerchantResponseMapping"
+//)
+//
+//@SqlResultSetMapping(
+//  name = "MerchantResponseMapping",
+//  classes = @ConstructorResult(
+//    targetClass = MerchantResponse.class,
+//    columns = {
+//      @ColumnResult(name = "id", type = UUID.class),
+//      @ColumnResult(name = "name", type = String.class),
+//      @ColumnResult(name = "location", type = String.class),
+//      @ColumnResult(name = "open", type = Boolean.class),
+//      @ColumnResult(name = "created_at", type = LocalDateTime.class),
+//      @ColumnResult(name = "updated_at", type = LocalDateTime.class)
+//    }
+//  )
+//)
 public class Merchant extends AuditableBase {
 
   @Column(nullable = false)
@@ -30,10 +50,12 @@ public class Merchant extends AuditableBase {
 
   public boolean open;
 
-
+  @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
     Merchant merchant = (Merchant) o;
     return Objects.equals(name, merchant.name) && Objects.equals(location, merchant.location);
   }

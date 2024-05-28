@@ -9,8 +9,10 @@ import java.util.UUID;
 public interface UserService {
 
   void softDelete(UUID id);
+
   UserResponse register(UserRegisterRequest request);
 
   UserResponse get(User user);
+
   UserResponse findById(UUID id);
 }

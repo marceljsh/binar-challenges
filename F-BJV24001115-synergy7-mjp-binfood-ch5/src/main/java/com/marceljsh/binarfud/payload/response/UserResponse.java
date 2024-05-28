@@ -1,5 +1,6 @@
 package com.marceljsh.binarfud.payload.response;
 
+import com.marceljsh.binarfud.model.User;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,4 +15,12 @@ public class UserResponse {
   private String username;
 
   private String email;
+
+  public static UserResponse of(User user) {
+    return UserResponse.builder()
+        .id(user.getId())
+        .username(user.getUsername())
+        .email(user.getEmail())
+        .build();
+  }
 }

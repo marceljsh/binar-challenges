@@ -11,6 +11,16 @@ import java.time.LocalDateTime;
 public class ErrorResponse {
 
   private HttpStatus status;
+
   private LocalDateTime timestamp;
+
   private String message;
+
+  public static ErrorResponse of(HttpStatus status, String message) {
+    return ErrorResponse.builder()
+        .status(status)
+        .timestamp(LocalDateTime.now())
+        .message(message)
+        .build();
+  }
 }

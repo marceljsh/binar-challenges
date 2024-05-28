@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.util.Objects;
 
@@ -18,7 +17,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @Builder
 @Entity
-@SQLRestriction("deleted_at IS NULL")
 @Table(name = "tbl_users")
 public class User extends AuditableBase {
 
@@ -38,8 +36,10 @@ public class User extends AuditableBase {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
     User user = (User) o;
     return Objects.equals(username, user.username) || Objects.equals(email, user.email);
   }

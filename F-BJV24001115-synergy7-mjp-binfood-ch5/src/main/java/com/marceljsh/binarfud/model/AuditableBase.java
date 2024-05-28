@@ -6,6 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreRemove;
+import jakarta.persistence.PreUpdate;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -36,11 +39,27 @@ public abstract class AuditableBase implements Serializable {
 
   private LocalDateTime deletedAt;
 
-  public void softDelete() {
+  @PrePersist
+  protected void onCreate() {
+    createdAt = LocalDateTime.now();
+    updatedAt = LocalDateTime.now();
+  }
+
+  @PreUpdate
+  public void onUpdate() {
+    updatedAt = LocalDateTime.now();
+  }
+
+  @PreRemove
+  public void onDelete() {
     deletedAt = LocalDateTime.now();
   }
 
   public boolean isDeleted() {
     return deletedAt != null;
+  }
+
+  public void onRestore() {
+    deletedAt = null;
   }
 }

@@ -14,13 +14,17 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
   @Transactional
   default void softDelete(UUID id) {
-    User user = findById(id).orElseThrow(() -> new EntityNotFoundException("no such user"));
-    user.softDelete();
+    User user = findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("no such user"));
+    user.onDelete();
     save(user);
   }
 
   boolean existsByUsername(String username);
+
   boolean existsByEmail(String email);
+
   Optional<User> findFirstByToken(String token);
+
   Optional<User> findFirstByUsername(String username);
 }

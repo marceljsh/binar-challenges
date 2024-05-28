@@ -1,13 +1,28 @@
 package com.marceljsh.binarfud.util;
 
+import java.util.Map;
+
 public class Constants {
 
-  private Constants() {}
-  
-  public static final String MSG_MERCHANT_NOT_FOUND = "merchant not found";
+  public static final class Msg {
+    public static final String MERCHANT_NOT_FOUND = "merchant not found";
+    public static final String PRODUCT_NOT_FOUND = "product not found";
 
-  public static final String REGEX_USERNAME = "^[a-z0-9._]*$";
-  public static final String REGEX_DISPLAY_NAME = "^[\\p{L}\\p{N}\\p{P}\\p{Z}\\p{M}]*$";
-  public static final String REGEX_PASSWORD = "^[a-zA-Z0-9!@#$%^&*()_\\-+=\\[\\]{}|;:'\",.<>/?\\\\]*$";
-  public static final String REGEX_UUID = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
+    private Msg() {
+    }
+  }
+
+  public static final class Rgx {
+    public static final String USERNAME = "^[a-z0-9._]*$";
+    public static final String DISPLAY_NAME = "^[a-zA-Z0-9 ]*$";
+    public static final String PASSWORD = "^[a-zA-Z0-9!@#$%^&*()_\\-+=\\[\\]{}|;:'\",.<>/?\\\\]*$";
+
+    private Rgx() {
+    }
+  }
+
+  public static final Map<String, String> OK_RESPONSE = Map.of("status", "ok");
+
+  private Constants() {
+  }
 }

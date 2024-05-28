@@ -13,7 +13,7 @@ import lombok.Data;
 public class UserRegisterRequest {
 
   @NotBlank(message = "username cannot be empty")
-  @Pattern(regexp = Constants.REGEX_USERNAME, message = "name can only have letters, numbers, dots, and underscores")
+  @Pattern(regexp = Constants.Rgx.USERNAME, message = "name can only have letters, numbers, dots, and underscores")
   @Size(min = 3, max = 32, message = "username must be {min}-{max} characters")
   private String username;
 
@@ -23,12 +23,12 @@ public class UserRegisterRequest {
   private String email;
 
   @NotBlank(message = "password cannot be empty")
-  @Pattern(regexp = Constants.REGEX_PASSWORD, message = "password can only have letters, numbers, and special characters")
+  @Pattern(regexp = Constants.Rgx.PASSWORD, message = "password can only have letters, numbers, and special characters")
   @Size(min = 8, max = 64, message = "password must be {min}-{max} characters")
   private String password;
 
   @NotBlank(message = "confirm password cannot be empty")
-  @Pattern(regexp = Constants.REGEX_PASSWORD, message = "password can only have letters, numbers, and special characters")
+  @Pattern(regexp = Constants.Rgx.PASSWORD, message = "password can only have letters, numbers, and special characters")
   @Size(min = 8, max = 64, message = "password must be {min}-{max} characters")
   private String confirmPassword;
 }

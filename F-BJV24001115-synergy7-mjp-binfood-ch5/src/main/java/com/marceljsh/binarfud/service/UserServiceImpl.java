@@ -23,14 +23,6 @@ public class UserServiceImpl implements UserService {
     this.userRepo = userRepo;
   }
 
-  private UserResponse toUserResponse(User user) {
-    return UserResponse.builder()
-        .id(user.getId())
-        .username(user.getUsername())
-        .email(user.getEmail())
-        .build();
-  }
-
   @Transactional
   @Override
   public void softDelete(UUID id) {
@@ -59,13 +51,13 @@ public class UserServiceImpl implements UserService {
       throw new TransactionSystemException("failed to register");
     }
 
-    return toUserResponse(user);
+    return UserResponse.of(user);
   }
 
   @Transactional(readOnly = true)
   @Override
   public UserResponse get(User user) {
-    return toUserResponse(user);
+    return UserResponse.of(user);
   }
 
   @Transactional(readOnly = true)
@@ -73,6 +65,6 @@ public class UserServiceImpl implements UserService {
   public UserResponse findById(UUID id) {
     User user = userRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("user not found"));
 
-    return toUserResponse(user);
+    return UserResponse.of(user);
   }
 }
