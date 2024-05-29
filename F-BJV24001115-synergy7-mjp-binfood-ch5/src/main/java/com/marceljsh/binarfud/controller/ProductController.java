@@ -9,7 +9,6 @@ import com.marceljsh.binarfud.payload.response.ProductResponse;
 import com.marceljsh.binarfud.service.spec.ProductService;
 import com.marceljsh.binarfud.util.Constants;
 import com.marceljsh.binarfud.validation.annotation.ValidUUID;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +16,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -43,8 +45,11 @@ public class ProductController {
     this.productService = productService;
   }
 
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<ProductResponse> add(@Valid @RequestBody ProductAddRequest request) {
+  @PostMapping(
+    consumes = MediaType.APPLICATION_JSON_VALUE,
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<ProductResponse> add(@RequestBody ProductAddRequest request) {
     log.info("adding product {}", request);
 
     ProductResponse response = productService.save(request);
@@ -53,13 +58,16 @@ public class ProductController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping(path = "/{product-id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<ProductResponse> get(@PathVariable("product-id") @Valid @ValidUUID String id,
+  @GetMapping(
+    path = "/{product-id}",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<ProductResponse> get(@PathVariable("product-id") @ValidUUID String id,
       @RequestParam(value = "eager", required = false, defaultValue = "false") boolean eager) {
     log.info("retrieving product {}", id);
 
     UUID productId = UUID.fromString(id);
-    ProductResponse response = productService.findById(productId, eager);
+    ProductResponse response = productService.get(productId, eager);
     log.info("product {} retrieved", id);
 
     return ResponseEntity.ok(response);
@@ -67,8 +75,9 @@ public class ProductController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Object> search(@RequestParam(value = "name", required = false) String name,
-      @RequestParam(value = "seller_id") String sellerId, @RequestParam(value = "min_price") Long minPrice,
-      @RequestParam(value = "max_price") Long maxPrice,
+      @RequestParam(value = "seller_id", required = false) UUID sellerId,
+      @RequestParam(value = "min_price", required = false) Long minPrice,
+      @RequestParam(value = "max_price", required = false) Long maxPrice,
       @RequestParam(value = "eager", required = false, defaultValue = "false") boolean eager,
       @RequestParam(value = "page", defaultValue = "0") Integer page,
       @RequestParam(value = "size", defaultValue = "10") Integer size) {
@@ -99,15 +108,20 @@ public class ProductController {
         .size(size)
         .build();
 
-    Page<ProductResponse> result = productService.get(request);
+    Page<ProductResponse> result = productService.search(request);
     PagedResponse<ProductResponse> response = PagedResponse.of("products", result);
 
     return ResponseEntity.ok(response);
   }
 
-  @PutMapping(path = "/{product-id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<ProductResponse> update(@PathVariable("product-id") @Valid @ValidUUID String id,
-      @Valid @RequestBody ProductUpdateRequest request) {
+  @PutMapping(
+    path = "/{product-id}",
+    consumes = MediaType.APPLICATION_JSON_VALUE,
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<ProductResponse> updateInfo(@PathVariable("product-id") @ValidUUID String id,
+      @RequestBody ProductUpdateRequest request) {
+
     log.info("updating product {}", id);
 
     request.setId(id);
@@ -117,13 +131,30 @@ public class ProductController {
     return ResponseEntity.ok(response);
   }
 
-  @DeleteMapping(path = "/{product-id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Map<String, String>> delete(@PathVariable("product-id") @Valid @ValidUUID String id) {
+  @DeleteMapping(
+    path = "/{product-id}",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<Map<String, String>> deactivate(@PathVariable("product-id") @ValidUUID String id) {
     log.info("deleting product {}", id);
 
     UUID productId = UUID.fromString(id);
-    productService.softDelete(productId);
+    productService.archive(productId);
     log.info("product {} deleted", id);
+
+    return ResponseEntity.ok(Constants.OK_RESPONSE);
+  }
+
+  @PatchMapping(
+    path = "/{product-id}",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<Map<String, String>> restore(@PathVariable("product-id") @ValidUUID String id) {
+    log.info("restoring product {}", id);
+
+    UUID productId = UUID.fromString(id);
+    productService.restore(productId);
+    log.info("product {} restored", id);
 
     return ResponseEntity.ok(Constants.OK_RESPONSE);
   }

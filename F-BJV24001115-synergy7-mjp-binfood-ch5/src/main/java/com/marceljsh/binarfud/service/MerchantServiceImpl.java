@@ -12,8 +12,6 @@ import com.marceljsh.binarfud.util.Constants;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -33,8 +31,6 @@ import java.util.UUID;
 public class MerchantServiceImpl implements MerchantService {
 
   private final MerchantRepository merchantRepo;
-
-  private static final Logger log = LoggerFactory.getLogger(MerchantServiceImpl.class);
 
   @Autowired
   public MerchantServiceImpl(MerchantRepository merchantRepo) {
@@ -64,7 +60,7 @@ public class MerchantServiceImpl implements MerchantService {
 
   @Transactional
   @Override
-  public void softDelete(UUID id) {
+  public void deactivate(UUID id) {
     merchantRepo.softDelete(id);
   }
 
@@ -82,7 +78,7 @@ public class MerchantServiceImpl implements MerchantService {
 
   @Transactional(readOnly = true)
   @Override
-  public MerchantResponse findById(UUID id) {
+  public MerchantResponse get(UUID id) {
     Merchant merchant = merchantRepo.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(Constants.Msg.MERCHANT_NOT_FOUND));
 
@@ -91,7 +87,7 @@ public class MerchantServiceImpl implements MerchantService {
 
   @Transactional(readOnly = true)
   @Override
-  public Page<MerchantResponse> get(MerchantSearchRequest request) {
+  public Page<MerchantResponse> search(MerchantSearchRequest request) {
     Specification<Merchant> specification = ((root, query, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
 
@@ -126,23 +122,21 @@ public class MerchantServiceImpl implements MerchantService {
           String.format("page %d out of bounds (%s)", request.getPage() + 1, merchants.getTotalPages()));
     }
 
-    List<MerchantResponse> responses = merchants.getContent()
+    List<MerchantResponse> result = merchants.getContent()
         .stream()
         .map(MerchantResponse::of)
         .toList();
 
-    return new PageImpl<>(responses, pageable, merchants.getTotalElements());
+    return new PageImpl<>(result, pageable, merchants.getTotalElements());
   }
 
   @Transactional
   @Override
   public void updateStatus(UUID id, boolean status) {
     if (!merchantRepo.existsById(id)) {
-      log.error("merchant {} not found", id);
       throw new EntityNotFoundException(Constants.Msg.MERCHANT_NOT_FOUND);
     }
 
-    log.info("updating merchant {} status to {}", id, status);
     merchantRepo.updateStatus(id, status);
   }
 
@@ -155,6 +149,7 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     Merchant merchant = merchantRepo.updateInfo(id, request.getName(), request.getLocation());
+
     return MerchantResponse.of(merchant);
   }
 }

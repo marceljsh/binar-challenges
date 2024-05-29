@@ -12,15 +12,15 @@ public interface ProductService {
 
   ProductResponse save(ProductAddRequest request);
 
-  void softDelete(UUID id);
+  void archive(UUID id);
 
   void restore(UUID id);
 
   void remove(UUID id);
 
-  ProductResponse findById(UUID id, boolean eager);
+  ProductResponse get(UUID id, boolean eager);
 
-  Page<ProductResponse> get(ProductSearchRequest request);
+  Page<ProductResponse> search(ProductSearchRequest request);
 
   ProductResponse updateInfo(ProductUpdateRequest request);
 }

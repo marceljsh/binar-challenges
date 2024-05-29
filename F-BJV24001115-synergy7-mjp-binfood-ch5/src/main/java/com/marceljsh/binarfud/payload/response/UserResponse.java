@@ -16,11 +16,14 @@ public class UserResponse {
 
   private String email;
 
+  private boolean active;
+
   public static UserResponse of(User user) {
     return UserResponse.builder()
         .id(user.getId())
         .username(user.getUsername())
         .email(user.getEmail())
+        .active(!user.isDeleted())
         .build();
   }
 }

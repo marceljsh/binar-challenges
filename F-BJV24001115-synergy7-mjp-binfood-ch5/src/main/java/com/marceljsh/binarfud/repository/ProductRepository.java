@@ -6,7 +6,6 @@ import com.marceljsh.binarfud.util.Constants;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +16,12 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
 
   @Transactional
   default void softDelete(UUID id) {
-    Product product = findById(id)
-        .orElseThrow(() -> new EntityNotFoundException(Constants.Msg.PRODUCT_NOT_FOUND));
+    Product product = findById(id).orElse(null);
 
-    product.onDelete();
-    save(product);
+    if (product != null) {
+      product.onDelete();
+      save(product);
+    }
   }
 
   @Transactional
@@ -35,7 +35,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
 
   boolean existsByNameAndPriceAndSeller(String name, long price, Merchant seller);
 
-  @Modifying
+  // TODO: how to map without returning all the columns?
+  //  mapping to entity requires all the columns
+  //  if possible, map to DTO
   @Transactional
   @Query(value = "SELECT * FROM update_product_info(:id, :name, :price)", nativeQuery = true)
   Product updateInfo(@Param("id") UUID id, @Param("name") String name, @Param("price") long price);

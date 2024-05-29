@@ -15,6 +15,8 @@ import com.marceljsh.binarfud.util.Constants;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -36,6 +38,8 @@ public class ProductServiceImpl implements ProductService {
   private final ProductRepository productRepo;
 
   private final MerchantRepository merchantRepo;
+
+  private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 
   @Autowired
   public ProductServiceImpl(ProductRepository productRepo, MerchantRepository merchantRepo) {
@@ -70,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Transactional
   @Override
-  public void softDelete(UUID id) {
+  public void archive(UUID id) {
     productRepo.softDelete(id);
   }
 
@@ -88,7 +92,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Transactional(readOnly = true)
   @Override
-  public ProductResponse findById(UUID id, boolean eager) {
+  public ProductResponse get(UUID id, boolean eager) {
     Product product = productRepo.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(Constants.Msg.PRODUCT_NOT_FOUND));
 
@@ -97,7 +101,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Transactional(readOnly = true)
   @Override
-  public Page<ProductResponse> get(ProductSearchRequest request) {
+  public Page<ProductResponse> search(ProductSearchRequest request) {
     Specification<Product> specification = ((root, query, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
 
@@ -115,7 +119,6 @@ public class ProductServiceImpl implements ProductService {
         predicates.add(criteriaBuilder.le(root.get("price"), request.getMaxPrice()));
       }
 
-      // add predicate for seller id
       if (Objects.nonNull(request.getSellerId())) {
         predicates.add(criteriaBuilder.equal(root.get("seller").get("id"), request.getSellerId()));
       }
@@ -135,23 +138,29 @@ public class ProductServiceImpl implements ProductService {
           String.format("page %d out of bounds (%s)", request.getPage() + 1, products.getTotalPages()));
     }
 
-    List<ProductResponse> responses = products.getContent()
+    List<ProductResponse> result = products.getContent()
         .stream()
         .map(request.isEager() ? ProductEagerResponse::of : ProductResponse::of)
         .toList();
 
-    return new PageImpl<>(responses, pageable, products.getTotalElements());
+    return new PageImpl<>(result, pageable, products.getTotalElements());
   }
 
   @Transactional
   @Override
   public ProductResponse updateInfo(ProductUpdateRequest request) {
     UUID id = UUID.fromString(request.getId());
+    log.info("product id {} is valid", request.getId());
+
     if (!productRepo.existsById(id)) {
+      log.error("no product with id {}", request.getId());
       throw new EntityNotFoundException(Constants.Msg.PRODUCT_NOT_FOUND);
     }
 
+    log.info("hitting productRepo");
     Product product = productRepo.updateInfo(id, request.getName(), request.getPrice());
+    log.info("productRepo processed product {}", request.getId());
+
     return ProductResponse.of(product);
   }
 }

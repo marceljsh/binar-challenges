@@ -18,11 +18,12 @@ public interface MerchantRepository extends JpaRepository<Merchant, UUID>, JpaSp
   // TODO: find a better way to soft delete, maybe pass DateTime.Now() to SP
   @Transactional
   default void softDelete(UUID id) {
-    Merchant merchant = findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("merchant not found"));
+    Merchant merchant = findById(id).orElse(null);
 
-    merchant.onDelete();
-    save(merchant);
+    if (merchant != null) {
+      merchant.onDelete();
+      save(merchant);
+    }
   }
 
   @Transactional
@@ -45,7 +46,6 @@ public interface MerchantRepository extends JpaRepository<Merchant, UUID>, JpaSp
   @Query(value = "CALL update_merchant_open(:id, :status)", nativeQuery = true)
   void updateStatus(@Param("id") UUID id, @Param("status") boolean open);
 
-  @Modifying
   @Transactional
   @Query(value = "SELECT * FROM update_merchant_info(:id, :name, :location)", nativeQuery = true)
   Merchant updateInfo(@Param("id") UUID id, @Param("name") String name, @Param("location") String location);

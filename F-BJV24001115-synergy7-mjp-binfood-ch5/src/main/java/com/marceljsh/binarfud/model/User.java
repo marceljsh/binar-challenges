@@ -23,7 +23,7 @@ public class User extends AuditableBase {
   @Column(unique = true, nullable = false, length = 32)
   private String username;
 
-  @Column(unique = true, nullable = false)
+  @Column(unique = true, nullable = false, updatable = false)
   private String email;
 
   @Column(nullable = false, length = 60)

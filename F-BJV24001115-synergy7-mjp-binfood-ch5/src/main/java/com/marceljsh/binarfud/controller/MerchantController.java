@@ -30,8 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 import java.util.UUID;
 
-@RestController
 @Validated
+@RestController
 @RequestMapping("/merchants")
 public class MerchantController {
 
@@ -43,8 +43,11 @@ public class MerchantController {
     this.merchantService = merchantService;
   }
 
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<MerchantResponse> add(@Valid @RequestBody MerchantAddRequest request) {
+  @PostMapping(
+    consumes = MediaType.APPLICATION_JSON_VALUE,
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<MerchantResponse> add(@RequestBody MerchantAddRequest request) {
     log.info("adding merchant {}", request);
 
     MerchantResponse response = merchantService.save(request);
@@ -53,12 +56,15 @@ public class MerchantController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<MerchantResponse> get(@PathVariable("id") @Valid @ValidUUID String id) {
+  @GetMapping(
+    path = "/{id}",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<MerchantResponse> get(@ValidUUID @PathVariable("id") String id) {
     log.info("retrieving merchant {}", id);
 
     UUID merchantId = UUID.fromString(id);
-    MerchantResponse response = merchantService.findById(merchantId);
+    MerchantResponse response = merchantService.get(merchantId);
     log.info("merchant {} retrieved", merchantId);
 
     return ResponseEntity.ok(response);
@@ -71,6 +77,7 @@ public class MerchantController {
       @RequestParam(value = "open", required = false) Boolean status,
       @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
       @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
+
     log.info("searching merchants with [name: {} | location: {} | page: {} | size: {}]", name, location, page, size);
 
     MerchantSearchRequest request = MerchantSearchRequest.builder()
@@ -81,14 +88,18 @@ public class MerchantController {
         .size(size)
         .build();
 
-    Page<MerchantResponse> result = merchantService.get(request);
+    Page<MerchantResponse> result = merchantService.search(request);
     PagedResponse<MerchantResponse> response = PagedResponse.of("merchants", result);
 
     return ResponseEntity.ok(response);
   }
 
-  @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<MerchantResponse> updateInfo(@Valid @ValidUUID @PathVariable("id") String id,
+  @PutMapping(
+    path = "/{id}",
+    consumes = MediaType.APPLICATION_JSON_VALUE,
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<MerchantResponse> updateInfo(@ValidUUID @PathVariable("id") String id,
       @Valid @RequestBody MerchantUpdateInfoRequest request) {
     log.info("updating merchant {}", request);
 
@@ -99,19 +110,25 @@ public class MerchantController {
     return ResponseEntity.ok(response);
   }
 
-  @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Map<String, String>> delete(@PathVariable("id") @Valid @ValidUUID String id) {
+  @DeleteMapping(
+    path = "/{id}",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<Map<String, String>> deactivate(@ValidUUID @PathVariable("id") String id) {
     log.info("deleting merchant {}", id);
 
     UUID merchantId = UUID.fromString(id);
-    merchantService.softDelete(merchantId);
+    merchantService.deactivate(merchantId);
     log.info("merchant {} deleted", merchantId);
 
     return ResponseEntity.ok(Constants.OK_RESPONSE);
   }
 
-  @PatchMapping(path = "/{id}")
-  public ResponseEntity<Map<String, String>> restore(@PathVariable("id") @Valid @ValidUUID String id) {
+  @PatchMapping(
+    path = "/{id}",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<Map<String, String>> restore(@ValidUUID @PathVariable("id") String id) {
     log.info("restoring merchant {}", id);
 
     UUID merchantId = UUID.fromString(id);
@@ -121,8 +138,11 @@ public class MerchantController {
     return ResponseEntity.ok(Constants.OK_RESPONSE);
   }
 
-  @PatchMapping(path = "/{id}/open")
-  public ResponseEntity<Map<String, String>> openMerchant(@PathVariable("id") @Valid @ValidUUID String id) {
+  @PatchMapping(
+    path = "/{id}/open",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<Map<String, String>> openMerchant(@ValidUUID @PathVariable("id") String id) {
     log.info("opening merchant {}", id);
 
     merchantService.updateStatus(UUID.fromString(id), true);
@@ -131,8 +151,11 @@ public class MerchantController {
     return ResponseEntity.ok(Constants.OK_RESPONSE);
   }
 
-  @PatchMapping(path = "/{id}/close")
-  public ResponseEntity<Map<String, String>> closeMerchant(@PathVariable("id") @Valid @ValidUUID String id) {
+  @PatchMapping(
+    path = "/{id}/close",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<Map<String, String>> closeMerchant(@ValidUUID @PathVariable("id") String id) {
     log.info("closing merchant {}", id);
 
     merchantService.updateStatus(UUID.fromString(id), false);

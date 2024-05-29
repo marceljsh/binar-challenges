@@ -21,6 +21,7 @@ public class ProductEagerResponse extends ProductResponse {
         .id(product.getId())
         .name(product.getName())
         .price(product.getPrice())
+        .deleted(product.isDeleted())
         .seller(MerchantResponse.of(product.getSeller()))
         .build();
   }

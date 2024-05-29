@@ -12,15 +12,15 @@ public interface MerchantService {
 
   MerchantResponse save(MerchantAddRequest request);
 
-  void softDelete(UUID id);
+  void deactivate(UUID id);
 
   void restore(UUID id);
 
   void remove(UUID id);
 
-  MerchantResponse findById(UUID id);
+  MerchantResponse get(UUID id);
 
-  Page<MerchantResponse> get(MerchantSearchRequest request);
+  Page<MerchantResponse> search(MerchantSearchRequest request);
 
   void updateStatus(UUID id, boolean open);
 

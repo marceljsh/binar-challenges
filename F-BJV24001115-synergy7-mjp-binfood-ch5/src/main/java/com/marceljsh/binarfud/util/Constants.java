@@ -8,6 +8,8 @@ public class Constants {
     public static final String MERCHANT_NOT_FOUND = "merchant not found";
     public static final String PRODUCT_NOT_FOUND = "product not found";
 
+    public static final String USER_NOT_FOUND = "user not found";
+
     private Msg() {
     }
   }

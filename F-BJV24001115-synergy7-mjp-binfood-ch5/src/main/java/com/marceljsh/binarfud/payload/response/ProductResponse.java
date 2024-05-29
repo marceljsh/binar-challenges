@@ -20,8 +20,10 @@ public class ProductResponse {
 
   protected long price;
 
-  public static ProductResponse of(UUID id, String name, long price) {
-    return new ProductResponse(id, name, price);
+  protected boolean deleted;
+
+  public static ProductResponse of(UUID id, String name, long price, boolean deleted) {
+    return new ProductResponse(id, name, price, deleted);
   }
 
   public static ProductResponse of(Product product) {
@@ -29,6 +31,7 @@ public class ProductResponse {
         .id(product.getId())
         .name(product.getName())
         .price(product.getPrice())
+        .deleted(product.isDeleted())
         .build();
   }
 }

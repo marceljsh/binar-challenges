@@ -18,7 +18,6 @@ public class ProductAddRequest {
   @Size(min = 3, max = 64, message = "name must be {min}-{max} characters")
   private String name;
 
-  @NotBlank(message = "price cannot be empty")
   @PositiveOrZero(message = "price must be zero or greater")
   private long price;
 

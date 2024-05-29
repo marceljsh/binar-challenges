@@ -4,24 +4,19 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.UUID;
-
 @Data
 @Builder
-public class ProductSearchRequest {
+public class UserSearchRequest {
 
-  private String name;
+  private String username;
 
-  private UUID sellerId;
+  private String email;
 
-  private Long minPrice;
-
-  private Long maxPrice;
-
-  private boolean eager;
+  private Boolean active;
 
   @NotNull
   private Integer page;
+
   @NotNull
   private Integer size;
 }

@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
     log.error("Constraint violation: {}", e.getMessage());
 
-    ErrorResponse response = ErrorResponse.of(HttpStatus.BAD_REQUEST, "invalid request body");
+    ErrorResponse response = ErrorResponse.of(HttpStatus.BAD_REQUEST, "invalid data: " + e.getMessage());
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
