@@ -93,6 +93,32 @@ public class UserServiceImpl implements UserService {
 
   @Transactional(readOnly = true)
   @Override
+  public UserResponse findByUsername(String username) {
+    if (!userRepo.existsByUsername(username)) {
+      throw new EntityNotFoundException(Constants.Msg.USER_NOT_FOUND);
+    }
+
+    User user = userRepo.findByUsername(username)
+        .orElseThrow(() -> new EntityNotFoundException(Constants.Msg.USER_NOT_FOUND));
+
+    return UserResponse.of(user);
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public UserResponse findByEmail(String email) {
+    if (!userRepo.existsByEmail(email)) {
+      throw new EntityNotFoundException(Constants.Msg.USER_NOT_FOUND);
+    }
+
+    User user = userRepo.findByEmail(email)
+      .orElseThrow(() -> new EntityNotFoundException(Constants.Msg.USER_NOT_FOUND));
+
+    return UserResponse.of(user);
+  }
+
+  @Transactional(readOnly = true)
+  @Override
   public Page<UserResponse> search(UserSearchRequest request) {
     Specification<User> specification = ((root, query, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();

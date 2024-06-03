@@ -21,9 +21,9 @@ public interface UserService {
 
   UserResponse get(UUID id);
 
-  // UserResponse findByUsername(String username);
+   UserResponse findByUsername(String username);
 
-  // UserResponse findByEmail(String email);
+   UserResponse findByEmail(String email);
 
   Page<UserResponse> search(UserSearchRequest request);
 

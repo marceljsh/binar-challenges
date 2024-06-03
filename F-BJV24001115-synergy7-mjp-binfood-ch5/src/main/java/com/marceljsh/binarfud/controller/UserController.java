@@ -68,9 +68,18 @@ public class UserController {
     return ResponseEntity.ok(response);
   }
 
-  // TODO: get single by username
+  @GetMapping(
+    path = "/@{username}",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<UserResponse> getByUsername(@PathVariable("username") String username) {
+    log.info("finding user by username {}", username);
 
-  // TODO: get single by email
+    UserResponse response = userService.findByUsername(username);
+    log.info("user {} found", username);
+
+    return ResponseEntity.ok(response);
+  }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<PagedResponse<UserResponse>> search(

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -33,11 +34,15 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
     save(user);
   }
 
+  @Transactional
+  @Query(value = "SELECT * FROM update_user_info(:id, :username)", nativeQuery = true)
+  User updateInfo(@Param("id") UUID id, @Param("username") String username);
+
   boolean existsByUsername(String username);
 
   boolean existsByEmail(String email);
 
-  @Transactional
-  @Query(value = "SELECT * FROM update_user_info(:id, :username)", nativeQuery = true)
-  User updateInfo(@Param("id") UUID id, @Param("username") String username);
+  Optional<User> findByUsername(String username);
+
+  Optional<User> findByEmail(String email);
 }
