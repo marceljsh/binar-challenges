@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.UUID;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 public class ProductAddRequest {
@@ -19,7 +21,7 @@ public class ProductAddRequest {
   private String name;
 
   @PositiveOrZero(message = "price must be zero or greater")
-  private long price;
+  private BigDecimal price;
 
   @NotBlank(message = "seller_id cannot be empty")
   @UUID(message = "seller_id must be a valid UUID")

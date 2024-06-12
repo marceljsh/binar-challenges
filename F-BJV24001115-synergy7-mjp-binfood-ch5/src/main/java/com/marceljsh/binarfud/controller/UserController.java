@@ -16,42 +16,32 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 import java.util.UUID;
 
 @Validated
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
-  private final UserService userService;
+  private final Logger log = LoggerFactory.getLogger(UserController.class);
 
-  private static final Logger log = LoggerFactory.getLogger(UserController.class);
+  private final UserService userService;
 
   @Autowired
   public UserController(UserService userService) {
     this.userService = userService;
-  }
-
-  @PostMapping(
-    consumes = MediaType.APPLICATION_JSON_VALUE,
-    produces = MediaType.APPLICATION_JSON_VALUE
-  )
-  public ResponseEntity<UserResponse> register(@RequestBody UserRegisterRequest request) {
-    log.info("registering user {}", request);
-
-    if (!request.getPassword().equals(request.getConfirmPassword())) {
-      String msg = "passwords do not match";
-      log.error(msg);
-      throw new IllegalArgumentException(msg);
-    }
-
-    UserResponse response = userService.register(request);
-    log.info("user {} registered", response.getId());
-
-    return ResponseEntity.ok(response);
   }
 
   @GetMapping(
@@ -94,7 +84,6 @@ public class UserController {
     UserSearchRequest request = UserSearchRequest.builder()
         .username(username)
         .email(email)
-        .active(active)
         .page(page - 1)
         .size(size)
         .build();

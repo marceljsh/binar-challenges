@@ -12,8 +12,6 @@ public class UserSearchRequest {
 
   private String email;
 
-  private Boolean active;
-
   @NotNull
   private Integer page;
 

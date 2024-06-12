@@ -7,6 +7,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.TransactionSystemException;
@@ -62,7 +63,7 @@ public class GlobalExceptionHandler {
 
     String errorMessage = e.getBindingResult().getAllErrors().stream()
         .map(DefaultMessageSourceResolvable::getDefaultMessage)
-        .collect(Collectors.joining(", "));
+        .collect(Collectors.joining("; "));
     ErrorResponse response = ErrorResponse.of(HttpStatus.BAD_REQUEST, errorMessage);
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -102,5 +103,23 @@ public class GlobalExceptionHandler {
     ErrorResponse response = ErrorResponse.of(HttpStatus.NOT_FOUND, e.getMessage());
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+  }
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+    log.error("Data integrity violation: {}", e.getMessage());
+
+    ErrorResponse response = ErrorResponse.of(HttpStatus.CONFLICT, e.getMessage());
+
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+  }
+
+  @ExceptionHandler(BadCredentialsException.class)
+  public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e) {
+    log.error("Bad credentials: {}", e.getMessage());
+
+    ErrorResponse response = ErrorResponse.of(HttpStatus.UNAUTHORIZED, e.getMessage());
+
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
   }
 }

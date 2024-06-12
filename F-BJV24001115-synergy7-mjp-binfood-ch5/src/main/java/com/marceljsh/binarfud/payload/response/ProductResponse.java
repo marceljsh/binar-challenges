@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -18,11 +19,11 @@ public class ProductResponse {
 
   protected String name;
 
-  protected long price;
+  protected BigDecimal price;
 
   protected boolean deleted;
 
-  public static ProductResponse of(UUID id, String name, long price, boolean deleted) {
+  public static ProductResponse of(UUID id, String name, BigDecimal price, boolean deleted) {
     return new ProductResponse(id, name, price, deleted);
   }
 

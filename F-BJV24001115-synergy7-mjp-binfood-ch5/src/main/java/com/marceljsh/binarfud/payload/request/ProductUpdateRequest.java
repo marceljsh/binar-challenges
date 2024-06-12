@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 public class ProductUpdateRequest {
@@ -20,5 +22,5 @@ public class ProductUpdateRequest {
   private String name;
 
   @PositiveOrZero(message = "price must be zero or greater")
-  private long price;
+  private BigDecimal price;
 }

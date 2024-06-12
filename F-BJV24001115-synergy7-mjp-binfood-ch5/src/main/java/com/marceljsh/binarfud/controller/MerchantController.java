@@ -32,11 +32,12 @@ import java.util.UUID;
 
 @Validated
 @RestController
-@RequestMapping("/merchants")
+@RequestMapping("/api/v1/merchants")
 public class MerchantController {
 
+  private final Logger log = LoggerFactory.getLogger(MerchantController.class);
+
   private final MerchantService merchantService;
-  private static final Logger log = LoggerFactory.getLogger(MerchantController.class);
 
   @Autowired
   public MerchantController(MerchantService merchantService) {

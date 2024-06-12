@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpecificationExecutor<Product> {
@@ -33,12 +34,12 @@ public interface ProductRepository extends JpaRepository<Product, UUID>, JpaSpec
     save(product);
   }
 
-  boolean existsByNameAndPriceAndSeller(String name, long price, Merchant seller);
+  boolean existsByNameAndPriceAndSeller(String name, BigDecimal price, Merchant seller);
 
   // TODO: how to map without returning all the columns?
   //  mapping to entity requires all the columns
   //  if possible, map to DTO
   @Transactional
   @Query(value = "SELECT * FROM update_product_info(:id, :name, :price)", nativeQuery = true)
-  Product updateInfo(@Param("id") UUID id, @Param("name") String name, @Param("price") long price);
+  Product updateInfo(@Param("id") UUID id, @Param("name") String name, @Param("price") BigDecimal price);
 }

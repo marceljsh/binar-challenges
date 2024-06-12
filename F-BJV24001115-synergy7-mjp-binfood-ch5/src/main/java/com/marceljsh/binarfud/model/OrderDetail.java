@@ -14,24 +14,36 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-@Getter
 @Setter
-@Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
-@Table(name = "tbl_products")
-public class Product extends AuditableBase {
-
-  @Column(nullable = false)
-  private String name;
-
-  @Column(nullable = false)
-  private BigDecimal price;
+@Table(name = "tbl_order_details")
+public class OrderDetail extends AuditableBase {
 
   @ManyToOne
-  @JoinColumn(name = "seller_id", referencedColumnName = "id")
-  private Merchant seller;
+  @JoinColumn(
+    name = "order_id",
+    referencedColumnName = "id",
+    nullable = false
+  )
+  private Order order;
+
+  @ManyToOne
+  @JoinColumn(
+    name = "product_id",
+    referencedColumnName = "id",
+    nullable = false
+  )
+  private Product product;
+
+  @Column(nullable = false)
+  private int quantity;
+
+  @Column(nullable = false)
+  private BigDecimal totalPrice;
 
   @Override
   public boolean equals(Object o) {
@@ -39,14 +51,12 @@ public class Product extends AuditableBase {
       return true;
     if (o == null || getClass() != o.getClass())
       return false;
-    Product that = (Product) o;
-    return price == that.price &&
-        Objects.equals(name, that.name) &&
-        Objects.equals(seller, that.getSeller());
+    OrderDetail that = (OrderDetail) o;
+    return order.equals(that.order) && product.equals(that.product);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, price, seller);
+    return Objects.hash(order, product);
   }
 }

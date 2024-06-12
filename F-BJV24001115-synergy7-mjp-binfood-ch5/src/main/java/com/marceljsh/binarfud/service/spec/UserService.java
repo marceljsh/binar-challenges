@@ -1,7 +1,6 @@
 package com.marceljsh.binarfud.service.spec;
 
 import com.marceljsh.binarfud.payload.request.UserChangePasswordRequest;
-import com.marceljsh.binarfud.payload.request.UserRegisterRequest;
 import com.marceljsh.binarfud.payload.request.UserSearchRequest;
 import com.marceljsh.binarfud.payload.request.UserUpdateInfoRequest;
 import com.marceljsh.binarfud.payload.response.UserResponse;
@@ -10,8 +9,6 @@ import org.springframework.data.domain.Page;
 import java.util.UUID;
 
 public interface UserService {
-
-  UserResponse register(UserRegisterRequest request);
 
   void deactivate(UUID id);
 

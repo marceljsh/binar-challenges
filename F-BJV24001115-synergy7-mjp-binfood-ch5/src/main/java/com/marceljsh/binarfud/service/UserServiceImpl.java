@@ -3,13 +3,11 @@ package com.marceljsh.binarfud.service;
 import com.marceljsh.binarfud.exhandling.PageNotFoundException;
 import com.marceljsh.binarfud.model.User;
 import com.marceljsh.binarfud.payload.request.UserChangePasswordRequest;
-import com.marceljsh.binarfud.payload.request.UserRegisterRequest;
 import com.marceljsh.binarfud.payload.request.UserSearchRequest;
 import com.marceljsh.binarfud.payload.request.UserUpdateInfoRequest;
 import com.marceljsh.binarfud.payload.response.UserResponse;
 import com.marceljsh.binarfud.repository.UserRepository;
 import com.marceljsh.binarfud.service.spec.UserService;
-import com.marceljsh.binarfud.util.BCrypt;
 import com.marceljsh.binarfud.util.Constants;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
@@ -20,8 +18,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -34,9 +32,12 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepo;
 
+  private final PasswordEncoder passwordEncoder;
+
   @Autowired
-  public UserServiceImpl(UserRepository userRepo) {
+  public UserServiceImpl(UserRepository userRepo, PasswordEncoder passwordEncoder) {
     this.userRepo = userRepo;
+    this.passwordEncoder = passwordEncoder;
   }
 
   @Transactional
@@ -55,31 +56,6 @@ public class UserServiceImpl implements UserService {
   @Override
   public void remove(UUID id) {
     userRepo.deleteById(id);
-  }
-
-  @Transactional
-  @Override
-  public UserResponse register(UserRegisterRequest request) {
-    if (userRepo.existsByEmail(request.getEmail())) {
-      throw new DataIntegrityViolationException("email is already registered");
-    }
-
-    if (userRepo.existsByUsername(request.getUsername())) {
-      throw new DataIntegrityViolationException("username is already taken");
-    }
-
-    User user = User.builder()
-        .username(request.getUsername())
-        .email(request.getEmail())
-        .password(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()))
-        .build();
-
-    User other = userRepo.save(user);
-    if (!user.equals(other)) {
-      throw new TransactionSystemException("failed to register");
-    }
-
-    return UserResponse.of(user);
   }
 
   @Transactional(readOnly = true)
@@ -135,11 +111,6 @@ public class UserServiceImpl implements UserService {
           "%" + request.getEmail().toLowerCase() + "%"));
       }
 
-      if (Objects.nonNull(request.getActive())) {
-        predicates.add(request.getActive() ? criteriaBuilder.isNull(root.get("deletedAt"))
-          : criteriaBuilder.isNotNull(root.get("deletedAt")));
-      }
-
       return query.where(predicates.toArray(new Predicate[] {})).getRestriction();
     });
 
@@ -191,11 +162,11 @@ public class UserServiceImpl implements UserService {
     User user = userRepo.findById(id)
         .orElseThrow(() -> new EntityNotFoundException(Constants.Msg.USER_NOT_FOUND));
 
-    if (!BCrypt.checkpw(request.getOldPassword(), user.getPassword())) {
+    if (passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
       throw new IllegalArgumentException("old password is incorrect");
     }
 
-    user.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
+    user.setPassword(passwordEncoder.encode(request.getPassword()));
     userRepo.save(user);
   }
 }

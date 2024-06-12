@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -14,9 +15,9 @@ public class ProductSearchRequest {
 
   private UUID sellerId;
 
-  private Long minPrice;
+  private BigDecimal minPrice;
 
-  private Long maxPrice;
+  private BigDecimal maxPrice;
 
   private boolean eager;
 

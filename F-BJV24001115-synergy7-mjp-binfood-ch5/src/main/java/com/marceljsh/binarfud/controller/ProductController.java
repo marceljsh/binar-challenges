@@ -28,15 +28,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
 @Validated
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/v1/products")
 public class ProductController {
 
-  private static final Logger log = LoggerFactory.getLogger(ProductController.class);
+  private final Logger log = LoggerFactory.getLogger(ProductController.class);
 
   private final ProductService productService;
 
@@ -81,28 +82,35 @@ public class ProductController {
       @RequestParam(value = "eager", required = false, defaultValue = "false") boolean eager,
       @RequestParam(value = "page", defaultValue = "0") Integer page,
       @RequestParam(value = "size", defaultValue = "10") Integer size) {
+
+    log.info("revalidate search parameters");
+
     if (minPrice != null && minPrice < 0) {
+      log.error("min_price does not meet the requirement");
       return ResponseEntity.badRequest()
           .body(ErrorResponse.of(HttpStatus.BAD_REQUEST, "min_price must be greater than or equal to 0"));
     }
 
     if (maxPrice != null && maxPrice < 0) {
+      log.error("max_price does not meet the requirement");
       return ResponseEntity.badRequest()
           .body(ErrorResponse.of(HttpStatus.BAD_REQUEST, "max_price must be greater than 0"));
     }
 
     if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+      log.error("min_price and max_price does not meet the requirement");
       return ResponseEntity.badRequest()
           .body(ErrorResponse.of(HttpStatus.BAD_REQUEST, "min_price must be less than or equal to max_price"));
     }
+    log.info("search parameters are valid");
 
     log.info("searching products");
 
     ProductSearchRequest request = ProductSearchRequest.builder()
         .name(name)
         .sellerId(sellerId)
-        .minPrice(minPrice)
-        .maxPrice(maxPrice)
+        .minPrice(BigDecimal.valueOf(minPrice))
+        .maxPrice(BigDecimal.valueOf(maxPrice))
         .eager(eager)
         .page(page)
         .size(size)
@@ -111,6 +119,7 @@ public class ProductController {
     Page<ProductResponse> result = productService.search(request);
     PagedResponse<ProductResponse> response = PagedResponse.of("products", result);
 
+    log.info("products found: {}", result.getTotalElements());
     return ResponseEntity.ok(response);
   }
 
