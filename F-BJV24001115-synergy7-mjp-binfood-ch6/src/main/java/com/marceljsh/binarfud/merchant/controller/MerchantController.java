@@ -1,7 +1,7 @@
 package com.marceljsh.binarfud.merchant.controller;
 
 import com.marceljsh.binarfud.common.dto.PagedResponse;
-import com.marceljsh.binarfud.common.ValidUUID;
+import com.marceljsh.binarfud.validation.ValidUUID;
 import com.marceljsh.binarfud.merchant.dto.MerchantResponse;
 import com.marceljsh.binarfud.merchant.dto.MerchantSearchRequest;
 import com.marceljsh.binarfud.merchant.service.MerchantService;

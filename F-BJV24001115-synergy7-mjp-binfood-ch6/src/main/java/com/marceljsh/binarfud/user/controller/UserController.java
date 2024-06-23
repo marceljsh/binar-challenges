@@ -1,7 +1,7 @@
 package com.marceljsh.binarfud.user.controller;
 
 import com.marceljsh.binarfud.common.dto.PagedResponse;
-import com.marceljsh.binarfud.common.ValidUUID;
+import com.marceljsh.binarfud.validation.ValidUUID;
 import com.marceljsh.binarfud.user.dto.UserResponse;
 import com.marceljsh.binarfud.user.dto.UserSearchRequest;
 import com.marceljsh.binarfud.user.service.UserService;

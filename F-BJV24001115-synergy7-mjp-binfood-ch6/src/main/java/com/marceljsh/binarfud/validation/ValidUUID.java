@@ -1,6 +1,5 @@
-package com.marceljsh.binarfud.common;
+package com.marceljsh.binarfud.validation;
 
-import com.marceljsh.binarfud.app.util.UUIDValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
