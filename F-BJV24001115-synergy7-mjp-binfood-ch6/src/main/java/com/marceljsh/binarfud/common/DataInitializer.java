@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -17,17 +14,12 @@ public class DataInitializer implements CommandLineRunner {
   private RoleRepository roleRepo;
 
   @Override
-  public void run(String ...args) {
-    List<Role> roles = Arrays.asList(
-      Role.builder().name(Roles.ROLE_USER.toString()).build(),
-      Role.builder().name(Roles.ROLE_MERCHANT.toString()).build()
-    );
-
-    roles.forEach(role -> {
-      if (!roleRepo.existsByName(role.getName())) {
-        roleRepo.save(role);
-      }
-    });
+  public void run(String... args) {
+    for (Roles role : Roles.values())
+      if (!roleRepo.existsByName(role.toString()))
+        roleRepo.save(Role.builder()
+            .name(role.toString())
+            .build());
   }
 
 }
