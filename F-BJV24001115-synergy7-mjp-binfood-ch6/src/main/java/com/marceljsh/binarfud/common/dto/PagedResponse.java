@@ -10,20 +10,23 @@ import java.util.List;
 @Builder
 public class PagedResponse<T> {
 
-  private List<T> records;
+  private List<T> data;
 
   private int currentPage;
 
   private int totalPages;
 
-  private long size;
+  private int size;
+
+  private long total;
 
   public static <T> PagedResponse<T> from(Page<T> page) {
     return PagedResponse.<T>builder()
-        .records(page.getContent())
+        .data(page.getContent())
         .currentPage(page.getNumber() + 1)
         .totalPages(page.getTotalPages())
         .size(page.getSize())
+        .total(page.getTotalElements())
         .build();
   }
 

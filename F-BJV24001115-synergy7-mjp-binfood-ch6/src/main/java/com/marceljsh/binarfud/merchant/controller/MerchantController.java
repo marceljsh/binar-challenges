@@ -7,12 +7,13 @@ import com.marceljsh.binarfud.merchant.dto.MerchantSearchRequest;
 import com.marceljsh.binarfud.merchant.service.MerchantService;
 import com.marceljsh.binarfud.merchant.dto.MerchantUpdateInfoRequest;
 import com.marceljsh.binarfud.merchant.dto.MerchantAddRequest;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,14 +30,15 @@ import java.util.UUID;
 
 @Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/merchants")
 public class MerchantController {
 
   private final Logger log = LoggerFactory.getLogger(MerchantController.class);
 
-  @Autowired
-  private MerchantService merchantService;
+  private final MerchantService merchantService;
 
+  @PreAuthorize("hasRole('ROLE_GOD')")
   @PostMapping(
     consumes = MediaType.APPLICATION_JSON_VALUE,
     produces = MediaType.APPLICATION_JSON_VALUE
@@ -44,9 +46,9 @@ public class MerchantController {
   public ResponseEntity<MerchantResponse> add(@RequestBody MerchantAddRequest request) {
     log.info("Received add merchant request: {}", request);
 
-    MerchantResponse response = merchantService.save(request);
+    MerchantResponse body = merchantService.save(request);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(body);
   }
 
   @GetMapping(
@@ -68,7 +70,7 @@ public class MerchantController {
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "location", required = false) String location,
       @RequestParam(value = "open", required = false) Boolean status,
-      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size) {
 
     log.info("Received search merchant request: name={}, location={}, status={}, page={}, size={}",
@@ -78,7 +80,7 @@ public class MerchantController {
         .name(name)
         .location(location)
         .open(status)
-        .page(page)
+        .page(page - 1)
         .size(size)
         .build();
 
@@ -100,9 +102,9 @@ public class MerchantController {
     UUID merchantId = UUID.fromString(id);
     request.setId(merchantId);
 
-    MerchantResponse response = merchantService.updateInfo(request);
+    MerchantResponse body = merchantService.updateInfo(request);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(body);
   }
 
   @PatchMapping(

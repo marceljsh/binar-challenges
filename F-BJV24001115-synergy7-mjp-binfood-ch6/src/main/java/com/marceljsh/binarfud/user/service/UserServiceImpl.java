@@ -10,9 +10,9 @@ import com.marceljsh.binarfud.user.model.User;
 import com.marceljsh.binarfud.user.repositoy.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,15 +29,14 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
   private final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
-  @Autowired
-  private UserRepository userRepo;
+  private final UserRepository userRepo;
 
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   @Transactional
@@ -167,7 +166,7 @@ public class UserServiceImpl implements UserService {
       return new PageImpl<>(List.of(), pageable, 0);
     }
 
-    if (request.getPage() > users.getTotalPages() - 1) {
+    if (request.getPage() + 1 > users.getTotalPages()) {
       String error = String.format(
           "page %d out of bounds (%s)",
           request.getPage() + 1,

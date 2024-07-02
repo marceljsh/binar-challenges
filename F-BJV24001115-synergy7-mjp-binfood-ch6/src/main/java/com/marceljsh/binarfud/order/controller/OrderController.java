@@ -3,9 +3,11 @@ package com.marceljsh.binarfud.order.controller;
 import com.marceljsh.binarfud.order.dto.OrderResponse;
 import com.marceljsh.binarfud.order.service.OrderService;
 import com.marceljsh.binarfud.order.dto.OrderAddRequest;
+import com.marceljsh.binarfud.reporting.dto.ReceiptResponse;
+import com.marceljsh.binarfud.reporting.service.ReportingService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,13 +23,15 @@ import java.util.UUID;
 
 @Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/orders")
 public class OrderController {
 
   private final Logger log = LoggerFactory.getLogger(OrderController.class);
 
-  @Autowired
-  private OrderService orderService;
+  private final OrderService orderService;
+
+  private final ReportingService reportingService;
 
   @PostMapping(
     consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -36,9 +40,9 @@ public class OrderController {
   public ResponseEntity<OrderResponse> add(@RequestBody OrderAddRequest request) {
     log.info("Received add order request: {}", request);
 
-    OrderResponse response = orderService.save(request);
+    OrderResponse body = orderService.save(request);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(body);
   }
 
   @GetMapping(
@@ -50,9 +54,9 @@ public class OrderController {
 
     UUID orderId = UUID.fromString(id);
 
-    OrderResponse response = orderService.get(orderId);
+    OrderResponse body = orderService.get(orderId);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(body);
   }
 
   @PatchMapping(
@@ -67,6 +71,19 @@ public class OrderController {
     orderService.complete(orderId);
 
     return ResponseEntity.ok().build();
+  }
+
+  @GetMapping(
+    value = "/{id}/receipt",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public ResponseEntity<ReceiptResponse> getReceipt(@PathVariable("id") String id) {
+    log.info("Received get order receipt request: {}", id);
+
+    UUID orderId = UUID.fromString(id);
+    ReceiptResponse body = reportingService.generateReceipt(orderId);
+
+    return ResponseEntity.ok(body);
   }
 
 }

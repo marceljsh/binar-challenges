@@ -1,6 +1,6 @@
 package com.marceljsh.binarfud.merchant.model;
 
-import com.marceljsh.binarfud.common.model.AuditableBase;
+import com.marceljsh.binarfud.common.model.Auditable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -19,7 +19,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @Table(name = "tbl_merchants")
-public class Merchant extends AuditableBase {
+public class Merchant extends Auditable {
 
   @Column(nullable = false, length = 80)
   private String name;

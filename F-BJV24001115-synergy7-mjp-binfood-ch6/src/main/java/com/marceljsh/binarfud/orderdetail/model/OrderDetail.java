@@ -1,7 +1,7 @@
 package com.marceljsh.binarfud.orderdetail.model;
 
 import com.marceljsh.binarfud.order.model.Order;
-import com.marceljsh.binarfud.common.model.AuditableBase;
+import com.marceljsh.binarfud.common.model.Auditable;
 import com.marceljsh.binarfud.product.model.Product;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,7 +24,7 @@ import java.util.Objects;
 @Builder
 @Entity
 @Table(name = "tbl_order_details")
-public class OrderDetail extends AuditableBase {
+public class OrderDetail extends Auditable {
 
   @ManyToOne
   @JoinColumn(

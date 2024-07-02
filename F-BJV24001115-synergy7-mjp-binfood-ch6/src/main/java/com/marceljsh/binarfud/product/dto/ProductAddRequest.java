@@ -1,6 +1,7 @@
 package com.marceljsh.binarfud.product.dto;
 
 import com.marceljsh.binarfud.app.util.Regexp;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
@@ -25,9 +26,11 @@ public class ProductAddRequest {
   )
   private String name;
 
+  @NotBlank(message = "Product price must not be blank")
   @PositiveOrZero(message = "Product price must be a positive number")
   private BigDecimal price;
 
+  @NotBlank(message = "Product stock must not be blank")
   @PositiveOrZero(message = "Product stock must be a positive number")
   private Integer stock;
 

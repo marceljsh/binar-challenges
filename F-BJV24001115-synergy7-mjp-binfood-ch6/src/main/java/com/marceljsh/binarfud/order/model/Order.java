@@ -1,6 +1,6 @@
 package com.marceljsh.binarfud.order.model;
 
-import com.marceljsh.binarfud.common.model.AuditableBase;
+import com.marceljsh.binarfud.common.model.Auditable;
 import com.marceljsh.binarfud.orderdetail.model.OrderDetail;
 import com.marceljsh.binarfud.user.model.User;
 import jakarta.persistence.Column;
@@ -27,7 +27,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @Table(name = "tbl_orders")
-public class Order extends AuditableBase {
+public class Order extends Auditable {
 
   @Column(nullable = false)
   private LocalDateTime orderTime;

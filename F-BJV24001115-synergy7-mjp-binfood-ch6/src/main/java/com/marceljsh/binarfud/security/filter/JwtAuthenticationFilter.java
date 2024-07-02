@@ -1,5 +1,7 @@
 package com.marceljsh.binarfud.security.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marceljsh.binarfud.common.dto.ErrorResponse;
 import com.marceljsh.binarfud.security.service.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -7,7 +9,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,24 +22,25 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  @Autowired
-  private JwtService jwtService;
+  private final JwtService jwtService;
 
-  @Autowired
-  private UserDetailsService userDetailsService;
+  private final UserDetailsService userDetailsService;
+
+  private final ObjectMapper mapper;
 
   @Override
   protected void doFilterInternal(
-      @NonNull HttpServletRequest request,
-      @NonNull HttpServletResponse response,
+      @NonNull HttpServletRequest req,
+      @NonNull HttpServletResponse res,
       @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-    final String authHeader = request.getHeader("Authorization");
+    final String authHeader = req.getHeader("Authorization");
 
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      filterChain.doFilter(request, response);
+      filterChain.doFilter(req, res);
       return;
     }
 
@@ -55,18 +59,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
               null,
               userDetails.getAuthorities());
 
-          authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+          authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
           SecurityContextHolder.getContext().setAuthentication(authToken);
         }
       }
 
     } catch (ExpiredJwtException ex) {
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.getWriter().write("token expired");
+      res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+      ErrorResponse response = ErrorResponse.from("token expired");
+      mapper.writeValue(res.getWriter(), response);
+
       return;
     }
 
-    filterChain.doFilter(request, response);
+    filterChain.doFilter(req, res);
   }
 
 }

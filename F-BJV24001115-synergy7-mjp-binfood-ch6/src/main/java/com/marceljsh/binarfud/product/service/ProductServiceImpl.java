@@ -12,9 +12,9 @@ import com.marceljsh.binarfud.product.model.Product;
 import com.marceljsh.binarfud.product.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -29,20 +29,19 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
   private final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 
-  @Autowired
-  private ProductRepository productRepo;
+  private final ProductRepository productRepo;
 
-  @Autowired
-  private MerchantRepository merchantRepo;
+  private final MerchantRepository merchantRepo;
 
   @Override
   @Transactional
   public ProductResponse save(ProductAddRequest request) {
-    log.trace("Saving product={} for merchant sellerId={}",
+    log.trace("Creating product={} for merchant sellerId={}",
         request.getName(), request.getSellerId());
 
     Merchant merchant = merchantRepo.findById(request.getSellerId()).orElse(null);
@@ -166,7 +165,7 @@ public class ProductServiceImpl implements ProductService {
       return new PageImpl<>(List.of(), pageable, 0);
     }
 
-    if (request.getPage() > products.getTotalPages() - 1) {
+    if (request.getPage() + 1 > products.getTotalPages()) {
       String error = String.format(
           "page %d out of bounds (%d)",
           request.getPage() + 1,

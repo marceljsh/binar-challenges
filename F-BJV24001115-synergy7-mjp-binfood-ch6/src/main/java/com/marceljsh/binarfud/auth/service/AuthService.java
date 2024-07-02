@@ -7,10 +7,11 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public interface AuthService {
 
+  void addGod();
+
   AuthResponse register(RegisterRequest request);
 
   AuthResponse authenticate(LoginRequest request);
 
   void logout(HttpServletRequest request);
-
 }

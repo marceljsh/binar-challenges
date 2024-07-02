@@ -11,9 +11,9 @@ import com.marceljsh.binarfud.merchant.repository.MerchantRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Predicate;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -28,12 +28,12 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class MerchantServiceImpl implements MerchantService {
 
   private final Logger log = LoggerFactory.getLogger(MerchantServiceImpl.class);
 
-  @Autowired
-  private MerchantRepository merchantRepo;
+  private final MerchantRepository merchantRepo;
 
   @Override
   @Transactional
@@ -148,7 +148,7 @@ public class MerchantServiceImpl implements MerchantService {
       return new PageImpl<>(List.of(), pageable, 0);
     }
 
-    if (request.getPage() > merchants.getTotalPages() - 1) {
+    if (request.getPage() + 1 > merchants.getTotalPages()) {
       String error = String.format(
           "page %d out of bounds (%d)",
           request.getPage() + 1,

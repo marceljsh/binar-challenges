@@ -8,9 +8,9 @@ import com.marceljsh.binarfud.order.repository.OrderRepository;
 import com.marceljsh.binarfud.user.model.User;
 import com.marceljsh.binarfud.user.repositoy.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,15 +18,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
   private final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
-  @Autowired
-  private OrderRepository orderRepo;
+  private final OrderRepository orderRepo;
 
-  @Autowired
-  private UserRepository userRepo;
+  private final UserRepository userRepo;
 
   @Override
   @Transactional

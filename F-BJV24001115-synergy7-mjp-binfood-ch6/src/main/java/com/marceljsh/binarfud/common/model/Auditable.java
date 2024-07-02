@@ -22,7 +22,7 @@ import java.util.UUID;
 @Setter
 @MappedSuperclass // so ID can be inherited by child classes
 @EntityListeners(AuditingEntityListener.class)
-public abstract class AuditableBase implements Serializable {
+public abstract class Auditable implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)

@@ -24,7 +24,7 @@ public class JwtServiceImpl implements JwtService {
 
   private final Logger log = LoggerFactory.getLogger(JwtServiceImpl.class);
 
-  @Value("${jwt.secret}")
+  @Value("${security.jwt.token.secret-key}")
   private String secretKey;
 
   @Override

@@ -1,7 +1,7 @@
 package com.marceljsh.binarfud.user.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.marceljsh.binarfud.common.model.AuditableBase;
+import com.marceljsh.binarfud.common.model.Auditable;
 import com.marceljsh.binarfud.security.model.Role;
 import com.marceljsh.binarfud.order.model.Order;
 import jakarta.persistence.CascadeType;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tbl_users")
-public class User extends AuditableBase implements UserDetails {
+public class User extends Auditable implements UserDetails {
 
   @Column(
     unique = true,

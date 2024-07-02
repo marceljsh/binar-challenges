@@ -3,9 +3,9 @@ package com.marceljsh.binarfud.orderdetail.controller;
 import com.marceljsh.binarfud.orderdetail.dto.OrderDetailResponse;
 import com.marceljsh.binarfud.orderdetail.service.OrderDetailService;
 import com.marceljsh.binarfud.orderdetail.dto.OrderDetailAddRequest;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,18 +16,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/order-details")
 public class OrderDetailController {
 
   private final Logger log = LoggerFactory.getLogger(OrderDetailController.class);
 
-  @Autowired
-  private OrderDetailService odService;
+  private final OrderDetailService odService;
 
   @PostMapping(
     consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -36,9 +37,9 @@ public class OrderDetailController {
   public ResponseEntity<OrderDetailResponse> add(@RequestBody OrderDetailAddRequest request) {
     log.info("Received add order detail request: {}", request);
 
-    OrderDetailResponse response = odService.save(request);
+    OrderDetailResponse body = odService.save(request);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(body);
   }
 
   @GetMapping(
@@ -50,23 +51,25 @@ public class OrderDetailController {
 
     UUID odId = UUID.fromString(id);
 
-    OrderDetailResponse response = odService.get(odId);
+    OrderDetailResponse body = odService.get(odId);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(body);
   }
 
   @GetMapping(
     value = "/by-order/{order-id}",
     produces = MediaType.APPLICATION_JSON_VALUE
   )
-  public ResponseEntity<Set<OrderDetailResponse>> getByOrderId(@PathVariable("order-id") String orderId) {
+  public ResponseEntity<Object> getByOrderId(@PathVariable("order-id") String orderId) {
     log.info("Received get order detail by order id request: {}", orderId);
 
     UUID oId = UUID.fromString(orderId);
 
-    Set<OrderDetailResponse> response = odService.getByOrderId(oId);
+    List<OrderDetailResponse> data = odService.getByOrderId(oId);
 
-    return ResponseEntity.ok(response);
+    Map<String, Object> body = Map.of("data", data);
+
+    return ResponseEntity.ok(body);
   }
 
 }

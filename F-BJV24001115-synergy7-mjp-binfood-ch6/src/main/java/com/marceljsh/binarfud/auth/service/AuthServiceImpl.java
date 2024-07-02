@@ -11,13 +11,14 @@ import com.marceljsh.binarfud.user.repositoy.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,21 +26,53 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
   private final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
 
-  @Autowired
-  private UserRepository userRepo;
+  private final UserRepository userRepo;
 
-  @Autowired
-  private RoleRepository roleRepo;
+  private final RoleRepository roleRepo;
 
-  @Autowired
-  private JwtService jwtService;
+  private final JwtService jwtService;
 
-  @Autowired
-  private AuthenticationManager authManager;
+  private final AuthenticationManager authManager;
+
+  private final PasswordEncoder passwordEncoder;
+
+  @Override
+  @Transactional
+  public void addGod() {
+    if (userRepo.existsByUsername("god") || userRepo.existsByEmail("god@this.com")) {
+      log.info("God is here");
+      return;
+    }
+
+    log.trace("Creating god");
+
+    String defaultRole = "ROLE_GOD";
+    if (!roleRepo.existsByName(defaultRole)) {
+      log.error("Role {} not found", defaultRole);
+      return;
+    }
+
+    Role roleGod = roleRepo.findByName(defaultRole).orElse(null);
+    if (roleGod == null) {
+      log.error("Role {} is null", defaultRole);
+      return;
+    }
+
+    User god = User.builder()
+        .username("god")
+        .email("god@this.com")
+        .password(passwordEncoder.encode("godisgood"))
+        .roles(Set.of(roleGod))
+        .build();
+
+    userRepo.save(god);
+    log.info("God created");
+  }
 
   @Override
   @Transactional
@@ -72,14 +105,14 @@ public class AuthServiceImpl implements AuthService {
     User user = User.builder()
         .username(request.getUsername())
         .email(request.getEmail())
-        .password(request.getPassword())
+        .password(passwordEncoder.encode(request.getPassword()))
         .roles(authorities)
         .build();
 
     userRepo.save(user);
 
     String token = jwtService.generateToken(user);
-    log.info("User registered: {}", user.getUsername());
+    log.info("User registered: @{}", user.getUsername());
 
     return AuthResponse.of(user, token);
   }

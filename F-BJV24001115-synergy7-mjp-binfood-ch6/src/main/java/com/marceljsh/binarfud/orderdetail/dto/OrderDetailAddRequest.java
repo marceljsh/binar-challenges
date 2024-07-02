@@ -1,7 +1,6 @@
 package com.marceljsh.binarfud.orderdetail.dto;
 
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Builder;
 import lombok.Data;
 
@@ -23,8 +22,5 @@ public class OrderDetailAddRequest {
 
   @Positive(message = "Quantity must be a positive number")
   private int quantity;
-
-  @PositiveOrZero(message = "Total price must be a positive number")
-  private double totalPrice;
 
 }

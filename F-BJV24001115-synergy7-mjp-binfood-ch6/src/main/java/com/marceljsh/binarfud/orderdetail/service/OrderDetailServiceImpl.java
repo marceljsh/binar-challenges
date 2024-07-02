@@ -10,30 +10,27 @@ import com.marceljsh.binarfud.orderdetail.repo.OrderDetailRepository;
 import com.marceljsh.binarfud.product.model.Product;
 import com.marceljsh.binarfud.product.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class OrderDetailServiceImpl implements OrderDetailService {
 
   private final Logger log = LoggerFactory.getLogger(OrderDetailServiceImpl.class);
 
-  @Autowired
-  private OrderDetailRepository odRepo;
+  private final OrderDetailRepository odRepo;
 
-  @Autowired
-  private OrderRepository orderRepo;
+  private final OrderRepository orderRepo;
 
-  @Autowired
-  private ProductRepository productRepo;
+  private final ProductRepository productRepo;
 
   @Override
   @Transactional
@@ -87,7 +84,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
   @Override
   @Transactional(readOnly = true)
-  public Set<OrderDetailResponse> getByOrderId(UUID orderId) {
+  public List<OrderDetailResponse> getByOrderId(UUID orderId) {
     log.trace("Fetching order details for order with id: {}", orderId);
 
     Order order = orderRepo.findById(orderId).orElse(null);
@@ -98,11 +95,11 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
     log.info("Found order with id: {}", orderId);
 
-    Set<OrderDetail> result = odRepo.findByOrderId(orderId);
+    List<OrderDetail> result = odRepo.findByOrderId(orderId);
 
     return result.stream()
         .map(OrderDetailResponse::from)
-        .collect(Collectors.toSet());
+        .toList();
   }
 
 }

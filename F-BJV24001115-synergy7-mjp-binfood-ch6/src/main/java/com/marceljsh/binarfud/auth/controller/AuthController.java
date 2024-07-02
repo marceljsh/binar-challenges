@@ -5,9 +5,9 @@ import com.marceljsh.binarfud.auth.service.AuthService;
 import com.marceljsh.binarfud.auth.dto.LoginRequest;
 import com.marceljsh.binarfud.auth.dto.RegisterRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,15 +16,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
   private final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-  @Autowired
-  private AuthService authService;
+  private final AuthService authService;
 
   @PostMapping(
     value = "/sign-up",
@@ -52,15 +54,11 @@ public class AuthController {
     return ResponseEntity.ok(response);
   }
 
-  @PostMapping(
-    value = "/sign-out",
-    consumes = MediaType.APPLICATION_JSON_VALUE,
-    produces = MediaType.APPLICATION_JSON_VALUE
-  )
-  public ResponseEntity<Void> signOut(HttpServletRequest request) {
+  @PostMapping(value = "/sign-out")
+  public ResponseEntity<Map<String, String>> signOut(HttpServletRequest request) {
     log.info("Received sign-out request");
 
-   authService.logout(request);
+    authService.logout(request);
 
     return ResponseEntity.ok().build();
   }

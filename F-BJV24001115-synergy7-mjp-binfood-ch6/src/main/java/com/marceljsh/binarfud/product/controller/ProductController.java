@@ -7,9 +7,9 @@ import com.marceljsh.binarfud.product.dto.ProductSearchRequest;
 import com.marceljsh.binarfud.product.service.ProductService;
 import com.marceljsh.binarfud.product.dto.ProductUpdateInfoRequest;
 import com.marceljsh.binarfud.product.dto.ProductAddRequest;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,13 +30,13 @@ import java.util.UUID;
 
 @Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/products")
 public class ProductController {
 
   private final Logger log = LoggerFactory.getLogger(ProductController.class);
 
-  @Autowired
-  private ProductService productService;
+  private final ProductService productService;
 
   @PostMapping(
     consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -45,9 +45,9 @@ public class ProductController {
   public ResponseEntity<ProductResponse> add(@RequestBody ProductAddRequest request) {
     log.info("Received add product request: {} by {}", request.getName(), request.getSellerId());
 
-    ProductResponse response = productService.save(request);
+    ProductResponse body = productService.save(request);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(body);
   }
 
   @GetMapping(
@@ -59,18 +59,18 @@ public class ProductController {
 
     UUID productId = UUID.fromString(id);
 
-    ProductResponse response = productService.get(productId);
+    ProductResponse body = productService.get(productId);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(body);
   }
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<PagedResponse<ProductResponse>> search(
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "min-price", defaultValue = "0") BigDecimal minPrice,
-      @RequestParam(value = "min-price", defaultValue = "0") BigDecimal maxPrice,
+      @RequestParam(value = "max-price", defaultValue = "0") BigDecimal maxPrice,
       @RequestParam(value = "seller", required = false) String seller,
-      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size) {
 
     log.info("Received search product request: name={}, minPrice={}, maxPrice={}, seller={}, page={}, size={}",
@@ -85,7 +85,7 @@ public class ProductController {
         .minPrice(minPrice)
         .maxPrice(maxPrice)
         .seller(seller)
-        .page(page)
+        .page(page - 1)
         .size(size)
         .build();
 
@@ -107,9 +107,9 @@ public class ProductController {
     UUID productId = UUID.fromString(id);
     request.setId(productId);
 
-    ProductResponse response = productService.updateInfo(request);
+    ProductResponse body = productService.updateInfo(request);
 
-    return ResponseEntity.ok(response);
+    return ResponseEntity.ok(body);
   }
 
   @DeleteMapping(value = "/{id}/archive")
