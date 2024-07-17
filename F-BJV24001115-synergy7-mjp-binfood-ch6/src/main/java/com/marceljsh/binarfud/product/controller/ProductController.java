@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,7 @@ public class ProductController {
 
   private final ProductService productService;
 
+  @PreAuthorize("hasAnyRole('ROLE_MERCHANT', 'ROLE_GOD')")
   @PostMapping(
     consumes = MediaType.APPLICATION_JSON_VALUE,
     produces = MediaType.APPLICATION_JSON_VALUE
@@ -50,6 +52,7 @@ public class ProductController {
     return ResponseEntity.ok(body);
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_GOD')")
   @GetMapping(
     value = "/{id}",
     produces = MediaType.APPLICATION_JSON_VALUE
@@ -64,6 +67,7 @@ public class ProductController {
     return ResponseEntity.ok(body);
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_GOD')")
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<PagedResponse<ProductResponse>> search(
       @RequestParam(value = "name", required = false) String name,
@@ -95,6 +99,7 @@ public class ProductController {
     return ResponseEntity.ok(body);
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_MERCHANT', 'ROLE_GOD')")
   @PutMapping(
     value = "/{id}",
     consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -112,6 +117,7 @@ public class ProductController {
     return ResponseEntity.ok(body);
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_MERCHANT', 'ROLE_GOD')")
   @DeleteMapping(value = "/{id}/archive")
   public ResponseEntity<Void> archive(@ValidUUID @PathVariable("id") String id) {
     log.info("Received archive product request: {}", id);
@@ -123,6 +129,7 @@ public class ProductController {
     return ResponseEntity.ok().build();
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_MERCHANT', 'ROLE_GOD')")
   @PatchMapping(value = "/{id}/restore")
   public ResponseEntity<Void> restore(@ValidUUID @PathVariable("id") String id) {
     log.info("Received restore product request: {}", id);

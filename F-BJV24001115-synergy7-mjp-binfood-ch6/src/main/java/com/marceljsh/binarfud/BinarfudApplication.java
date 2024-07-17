@@ -13,6 +13,8 @@ public class BinarfudApplication {
   // TODO
   //  [ ] blacklist token because token from app before recompile
   //      is still valid as long as it's not expired
+  //  [ ] implement OAuth2
+  //  [ ] mail verification
   //  [ ] intercept and inject owner_id when creating request using jwt
   //  [ ] subtract stock after order
   //  [ ] use @PreAuthorize for security

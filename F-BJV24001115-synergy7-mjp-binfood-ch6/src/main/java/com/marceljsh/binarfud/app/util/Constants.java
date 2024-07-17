@@ -13,4 +13,10 @@ public class Constants {
 
   public static final String MSG_ORDER_NOT_FOUND = "Order not found";
 
+  public static final String MSG_ROLE_NOT_FOUND = "Role not found";
+
+  public static final String MSG_EMAIL_TAKEN = "Email is already taken";
+
+  public static final String MSG_USERNAME_TAKEN = "Username is already taken";
+
 }

@@ -54,7 +54,7 @@ public class User extends Auditable implements UserDetails {
   @JsonProperty(
     access = JsonProperty.Access.WRITE_ONLY
   )
-  @Column(nullable = false, length = 60)
+  @Column(length = 60)
   private String password;
 
   @ManyToMany(

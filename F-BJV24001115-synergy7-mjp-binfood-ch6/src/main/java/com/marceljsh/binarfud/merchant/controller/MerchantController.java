@@ -51,6 +51,7 @@ public class MerchantController {
     return ResponseEntity.ok(body);
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_GOD', 'ROLE_USER')")
   @GetMapping(
     value = "/{id}",
     produces = MediaType.APPLICATION_JSON_VALUE
@@ -65,6 +66,7 @@ public class MerchantController {
     return ResponseEntity.ok(response);
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_GOD', 'ROLE_USER')")
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<PagedResponse<MerchantResponse>> search(
       @RequestParam(value = "name", required = false) String name,
@@ -90,6 +92,7 @@ public class MerchantController {
     return ResponseEntity.ok(body);
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_GOD', 'ROLE_MERCHANT')")
   @PutMapping(
     value = "/{id}",
     consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -107,6 +110,7 @@ public class MerchantController {
     return ResponseEntity.ok(body);
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_GOD', 'ROLE_MERCHANT')")
   @PatchMapping(
     value = "/{id}/open",
     produces = MediaType.APPLICATION_JSON_VALUE
@@ -120,6 +124,7 @@ public class MerchantController {
     return ResponseEntity.ok().build();
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_GOD', 'ROLE_MERCHANT')")
   @PatchMapping(value = "/{id}/close")
   public ResponseEntity<Void> close(@ValidUUID @PathVariable("id") String id) {
     log.info("Received close merchant request: {}", id);
@@ -130,6 +135,7 @@ public class MerchantController {
     return ResponseEntity.ok().build();
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_GOD', 'ROLE_MERCHANT')")
   @DeleteMapping(value = "/{id}")
   public ResponseEntity<Void> deactivate(@ValidUUID @PathVariable("id") String id) {
     log.info("Received delete merchant request: {}", id);
@@ -140,6 +146,7 @@ public class MerchantController {
     return ResponseEntity.ok().build();
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_GOD', 'ROLE_MERCHANT')")
   @PatchMapping(value = "/{id}/restore")
   public ResponseEntity<Void> restore(@ValidUUID @PathVariable("id") String id) {
     log.info("Received restore merchant request: {}", id);

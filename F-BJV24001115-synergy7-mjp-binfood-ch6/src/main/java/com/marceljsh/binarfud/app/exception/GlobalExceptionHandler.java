@@ -27,6 +27,13 @@ public class GlobalExceptionHandler {
     return ResponseEntity.internalServerError().body(body);
   }
 
+  @ExceptionHandler(RuntimeException.class)
+  public ResponseEntity<ErrorResponse> handleRuntimeError(RuntimeException ex) {
+    ErrorResponse body = ErrorResponse.from("Runtime error occurred: " + ex.getMessage());
+
+    return ResponseEntity.internalServerError().body(body);
+  }
+
   @ExceptionHandler(EntityExistsException.class)
   public ResponseEntity<ErrorResponse> handleEntityExists(EntityExistsException ex) {
     ErrorResponse body = ErrorResponse.from("Entity already exists: " + ex.getMessage());

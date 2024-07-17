@@ -9,6 +9,8 @@ public interface AuthService {
 
   void addGod();
 
+  void registerOAuth2(String email);
+
   AuthResponse register(RegisterRequest request);
 
   AuthResponse authenticate(LoginRequest request);

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +37,11 @@ public class UserController {
 
   private final UserService userService;
 
-  @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_GOD')")
+  @GetMapping(
+    value = "/{id}",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
   public ResponseEntity<UserResponse> get(@ValidUUID @PathVariable("id") String id) {
     log.info("Received get user request: {}", id);
 
@@ -47,13 +52,16 @@ public class UserController {
     return ResponseEntity.ok(body);
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_GOD')")
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<PagedResponse<UserResponse>> search(
       @RequestParam(value = "username", required = false) String username,
       @RequestParam(value = "email", required = false) String email,
       @RequestParam(value = "page", defaultValue = "1") int page,
       @RequestParam(value = "size", defaultValue = "10") int size) {
-    log.info("Received search user request: name={}, email={}, page={}, size={}", username, email, page, size);
+
+    log.info("Received search user request: name={}, email={}, page={}, size={}",
+      username, email, page, size);
 
     UserSearchRequest request = UserSearchRequest.builder()
         .username(username)
@@ -68,7 +76,11 @@ public class UserController {
     return ResponseEntity.ok(body);
   }
 
-  @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_GOD')")
+  @PutMapping(
+    value = "/{id}",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
   public ResponseEntity<UserResponse> update(@ValidUUID @PathVariable("id") String id,
       @RequestBody UserUpdateInfoRequest request) {
     log.info("Received update user info request: id={}", id);
@@ -81,7 +93,11 @@ public class UserController {
     return ResponseEntity.ok(body);
   }
 
-  @PatchMapping(value = "/{id}/change-password", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_GOD')")
+  @PatchMapping(
+    value = "/{id}/change-password",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
   public ResponseEntity<Void> changePassword(@ValidUUID @PathVariable("id") String id,
       @RequestBody UserChangePasswordRequest request) {
     log.info("Received change password request: id={}", id);
@@ -94,7 +110,11 @@ public class UserController {
     return ResponseEntity.ok().build();
   }
 
-  @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_GOD')")
+  @DeleteMapping(
+    value = "/{id}",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
   public ResponseEntity<Void> activate(@ValidUUID @PathVariable("id") String id) {
     log.info("Received activate user request: id={}", id);
 
@@ -105,7 +125,11 @@ public class UserController {
     return ResponseEntity.ok().build();
   }
 
-  @PatchMapping(value = "/{id}/restore", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_GOD')")
+  @PatchMapping(
+    value = "/{id}/restore",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
   public ResponseEntity<Void> restore(@ValidUUID @PathVariable("id") String id) {
     log.info("Received restore user request: id={}", id);
 

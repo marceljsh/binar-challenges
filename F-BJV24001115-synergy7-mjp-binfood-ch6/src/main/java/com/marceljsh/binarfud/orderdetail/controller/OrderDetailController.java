@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ public class OrderDetailController {
 
   private final OrderDetailService odService;
 
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_GOD')")
   @PostMapping(
     consumes = MediaType.APPLICATION_JSON_VALUE,
     produces = MediaType.APPLICATION_JSON_VALUE
@@ -42,6 +44,7 @@ public class OrderDetailController {
     return ResponseEntity.ok(body);
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_GOD')")
   @GetMapping(
     value = "/{id}",
     produces = MediaType.APPLICATION_JSON_VALUE
@@ -56,6 +59,7 @@ public class OrderDetailController {
     return ResponseEntity.ok(body);
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_GOD')")
   @GetMapping(
     value = "/by-order/{order-id}",
     produces = MediaType.APPLICATION_JSON_VALUE

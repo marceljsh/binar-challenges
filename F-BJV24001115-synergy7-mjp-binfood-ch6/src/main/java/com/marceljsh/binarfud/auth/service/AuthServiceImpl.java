@@ -1,5 +1,6 @@
 package com.marceljsh.binarfud.auth.service;
 
+import com.marceljsh.binarfud.app.util.Constants;
 import com.marceljsh.binarfud.auth.dto.AuthResponse;
 import com.marceljsh.binarfud.auth.dto.LoginRequest;
 import com.marceljsh.binarfud.auth.dto.RegisterRequest;
@@ -14,18 +15,17 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
@@ -37,41 +37,59 @@ public class AuthServiceImpl implements AuthService {
 
   private final JwtService jwtService;
 
-  private final AuthenticationManager authManager;
-
   private final PasswordEncoder passwordEncoder;
+
+  @Value("${god.password}")
+  private String godPassword;
 
   @Override
   @Transactional
   public void addGod() {
-    if (userRepo.existsByUsername("god") || userRepo.existsByEmail("god@this.com")) {
-      log.info("God is here");
-      return;
+    String username = "god";
+    String email = "god@this.com";
+
+    if (!userRepo.existsByEmailOrUsername(email, username)) {
+      Role roleGod = roleRepo.findByName("ROLE_GOD")
+          .orElse(roleRepo.findAll().get(0));
+
+      User god = User.builder()
+          .username(username)
+          .email(email)
+          .password(passwordEncoder.encode(godPassword))
+          .roles(Set.of(roleGod))
+          .build();
+
+      userRepo.save(god);
     }
 
-    log.trace("Creating god");
+    log.info("God is here");
+  }
 
-    String defaultRole = "ROLE_GOD";
-    if (!roleRepo.existsByName(defaultRole)) {
-      log.error("Role {} not found", defaultRole);
-      return;
+  @Override
+  @Transactional
+  public void registerOAuth2(String email) {
+    if (userRepo.existsByEmail(email)) {
+      log.error(Constants.MSG_EMAIL_TAKEN);
+      throw new DataIntegrityViolationException(Constants.MSG_EMAIL_TAKEN);
     }
 
-    Role roleGod = roleRepo.findByName(defaultRole).orElse(null);
-    if (roleGod == null) {
-      log.error("Role {} is null", defaultRole);
-      return;
+    String defaultRole = "ROLE_USER";
+    Role roleUser = roleRepo.findByName(defaultRole).orElse(null);
+    if (roleUser == null) {
+      log.error(Constants.MSG_ROLE_NOT_FOUND);
+      throw new EntityNotFoundException(Constants.MSG_ROLE_NOT_FOUND);
     }
 
-    User god = User.builder()
-        .username("god")
-        .email("god@this.com")
-        .password(passwordEncoder.encode("godisgood"))
-        .roles(Set.of(roleGod))
+    String username = email.split("@")[0] + "_oauth2";
+    User user = User.builder()
+        .username(username)
+        .email(email)
+        .roles(Set.of(roleUser))
         .build();
 
-    userRepo.save(god);
-    log.info("God created");
+    userRepo.save(user);
+
+    log.info("OAuth2 User registered: {}", user.getEmail());
   }
 
   @Override
@@ -80,13 +98,18 @@ public class AuthServiceImpl implements AuthService {
     log.trace("Registering new user @{} <{}>", request.getUsername(), request.getEmail());
 
     if (userRepo.existsByEmail(request.getEmail())) {
-      log.error("Email is already taken");
-      throw new DataIntegrityViolationException("Email is already taken");
+      log.error(Constants.MSG_EMAIL_TAKEN);
+      throw new DataIntegrityViolationException(Constants.MSG_EMAIL_TAKEN);
+    }
+
+    if (request.getUsername().endsWith("_oauth2")) {
+      log.error("Username cannot end with '_oauth2'");
+      throw new DataIntegrityViolationException("Username cannot end with '_oauth2'");
     }
 
     if (userRepo.existsByUsername(request.getUsername())) {
-      log.error("Username is already taken");
-      throw new DataIntegrityViolationException("Username is already taken");
+      log.error(Constants.MSG_USERNAME_TAKEN);
+      throw new DataIntegrityViolationException(Constants.MSG_USERNAME_TAKEN);
     }
 
     Set<Role> authorities = new HashSet<>();
@@ -96,7 +119,7 @@ public class AuthServiceImpl implements AuthService {
 
       if (roleUser == null) {
         log.error("Role {} not found", defaultRole);
-        throw new EntityNotFoundException("Role not found");
+        throw new EntityNotFoundException(Constants.MSG_ROLE_NOT_FOUND);
       }
 
       authorities.add(roleUser);
@@ -121,10 +144,6 @@ public class AuthServiceImpl implements AuthService {
   @Transactional
   public AuthResponse authenticate(LoginRequest request) {
     log.trace("Authenticating user @{}", request.getUsername());
-
-    authManager.authenticate(
-        new UsernamePasswordAuthenticationToken(
-            request.getUsername(), request.getPassword()));
 
     User user = userRepo.findByUsername(request.getUsername()).orElse(null);
     if (user == null) {

@@ -1,6 +1,7 @@
 package com.marceljsh.binarfud.app.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marceljsh.binarfud.auth.service.AuthService;
 import com.marceljsh.binarfud.common.dto.ErrorResponse;
 import com.marceljsh.binarfud.security.filter.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,10 +20,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -37,27 +42,53 @@ public class SecurityConfig {
       "/swagger-resources"
   };
 
+  private static final String[] AUTH_WHITELIST = {
+      "/api/v1/auth/sign-up",
+      "/api/v1/auth/sign-in"
+  };
+
   private final JwtAuthenticationFilter jwtAuthFilter;
 
   private final AuthenticationProvider authProvider;
 
   private final ObjectMapper objectMapper;
 
+  private final OidcUserService oidcUserService;
+
+  private final AuthService authService;
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers(HttpMethod.POST, "/api/v1/auth/sign-up", "/api/v1/auth/sign-in").permitAll()
-            .requestMatchers(SWAGGER_WHITELIST).permitAll()
-            .anyRequest().authenticated())
-        .sessionManagement(session -> session
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .cors(withDefaults())
         .authenticationProvider(authProvider)
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-        .exceptionHandling(exceptions -> exceptions
-            .authenticationEntryPoint(this::handleAuthenticationException)
-            .accessDeniedHandler(this::handleAccessDeniedException));
+        .formLogin(withDefaults())
+
+        .sessionManagement(session -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(HttpMethod.POST, AUTH_WHITELIST).permitAll()
+            .requestMatchers("/login").permitAll()
+            .requestMatchers(SWAGGER_WHITELIST).permitAll()
+            .anyRequest().authenticated())
+
+        .oauth2Login(oauth2 -> oauth2
+            .userInfoEndpoint(userInfo -> userInfo
+                .oidcUserService(oidcUserService))
+            .successHandler((request, response, authentication) -> {
+              DefaultOidcUser oidcUser = (DefaultOidcUser) authentication.getPrincipal();
+              authService.registerOAuth2(oidcUser.getAttribute("email"));
+
+              response.sendRedirect("/auth/oauth2/success");
+            }))
+
+//        .exceptionHandling(exceptions -> exceptions
+//            .authenticationEntryPoint(this::handleAuthenticationException)
+//            .accessDeniedHandler(this::handleAccessDeniedException))
+    ;
 
     return http.build();
   }

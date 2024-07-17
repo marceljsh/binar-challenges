@@ -6,13 +6,13 @@ import com.marceljsh.binarfud.orderdetail.dto.OrderDetailResponse;
 import com.marceljsh.binarfud.orderdetail.service.OrderDetailService;
 import com.marceljsh.binarfud.reporting.dto.ReceiptResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class ReportingServiceImpl implements ReportingService {
 
@@ -21,7 +21,7 @@ public class ReportingServiceImpl implements ReportingService {
   private final OrderDetailService odService;
 
   @Override
-  @Transactional
+  @Transactional(readOnly = true)
   public ReceiptResponse generateReceipt(UUID orderId) {
     OrderResponse order = orderService.get(orderId);
 
