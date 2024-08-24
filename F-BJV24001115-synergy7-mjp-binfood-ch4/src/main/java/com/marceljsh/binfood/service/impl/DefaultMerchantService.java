@@ -122,17 +122,15 @@ public class DefaultMerchantService implements MerchantService {
       if (Objects.nonNull(request.getName())) {
         log.debug("searching for name: {}", request.getName());
         predicates.add(criteriaBuilder.like(
-          criteriaBuilder.lower(root.get("name")),
-          "%" + request.getName().toLowerCase() + "%"
-        ));
+            criteriaBuilder.lower(root.get("name")),
+            "%" + request.getName().toLowerCase() + "%"));
       }
 
       if (Objects.nonNull(request.getLocation())) {
         log.debug("searching for location: {}", request.getLocation());
         predicates.add(criteriaBuilder.like(
-          criteriaBuilder.lower(root.get("location")),
-          "%" + request.getLocation().toLowerCase() + "%"
-        ));
+            criteriaBuilder.lower(root.get("location")),
+            "%" + request.getLocation().toLowerCase() + "%"));
       }
 
       if (Objects.nonNull(request.getOpen())) {
@@ -146,9 +144,9 @@ public class DefaultMerchantService implements MerchantService {
     Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
     Page<Merchant> merchants = merchantRepo.findAll(specification, pageable);
     List<MerchantResponse> responses = merchants.getContent()
-      .stream()
-      .map(this::toMerchantResponse)
-      .toList();
+        .stream()
+        .map(this::toMerchantResponse)
+        .toList();
 
     return new PageImpl<>(responses, pageable, merchants.getTotalElements());
   }
@@ -156,12 +154,18 @@ public class DefaultMerchantService implements MerchantService {
   @Transactional
   @Override
   public Page<MerchantResponse> getAllOpen(int page, int size) {
+    Specification<Merchant> specification = ((root, query, cb) -> {
+      List<Predicate> predicates = List.of(cb.equal(root.get("open"), true));
+
+      return query.where(predicates.toArray(new Predicate[] {})).getRestriction();
+    });
+
     Pageable pageable = PageRequest.of(page, size);
-    Page<Merchant> merchants = merchantRepo.findAllOpen(pageable);
+    Page<Merchant> merchants = merchantRepo.findAll(specification, pageable);
     List<MerchantResponse> responses = merchants.getContent()
-      .stream()
-      .map(this::toMerchantResponse)
-      .toList();
+        .stream()
+        .map(this::toMerchantResponse)
+        .toList();
 
     return new PageImpl<>(responses, pageable, merchants.getTotalElements());
   }
@@ -175,7 +179,7 @@ public class DefaultMerchantService implements MerchantService {
 
     UUID id = UUID.fromString(request.getId());
     Merchant merchant = merchantRepo.findById(id)
-      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant not found"));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "merchant not found"));
 
     if (merchantRepo.existsByNameAndLocation(request.getName(), request.getLocation())) {
       log.error("name and location already taken");

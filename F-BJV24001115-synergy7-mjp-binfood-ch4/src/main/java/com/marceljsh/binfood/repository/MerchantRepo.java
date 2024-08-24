@@ -1,8 +1,6 @@
 package com.marceljsh.binfood.repository;
 
 import com.marceljsh.binfood.model.Merchant;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -26,6 +24,4 @@ public interface MerchantRepo extends JpaRepository<Merchant, UUID>, JpaSpecific
 
   @Query(value = "CALL update_merchant_open(:id, :status)", nativeQuery = true)
   void updateStatus(@Param("id") UUID id, @Param("status") boolean status);
-
-  Page<Merchant> findAllOpen(Pageable pageable);
 }

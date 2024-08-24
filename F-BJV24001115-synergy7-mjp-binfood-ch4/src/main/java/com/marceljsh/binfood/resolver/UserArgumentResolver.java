@@ -30,7 +30,6 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
   @Override
   public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-
     HttpServletRequest servletRequest = (HttpServletRequest) webRequest.getNativeRequest();
 
     String rawToken = servletRequest.getHeader("Authorization");

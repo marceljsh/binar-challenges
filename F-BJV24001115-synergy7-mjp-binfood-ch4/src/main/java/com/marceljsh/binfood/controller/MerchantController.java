@@ -34,8 +34,11 @@ public class MerchantController {
         .build();
   }
 
-  @GetMapping(path = "/{merchant-id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public MerchantResponse get(User user, @PathVariable("merchant-id") String id) {
+  @GetMapping(
+    path = "/{merchant-id}",
+    produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public MerchantResponse get(@PathVariable("merchant-id") String id) {
     return merchantService.findById(id);
   }
 
